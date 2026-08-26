@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="CafeMissionario.Views.ProdutoCadView"
+             BackgroundColor="#7b2332">
+    <ScrollView>
+        <VerticalStackLayout Spacing="15"
+                             Padding="30"
+                             MaximumWidthRequest="500"
+                             HorizontalOptions="Center">
+
+            <Label Text="Novo Produto"
+                   FontSize="24"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"
+                   Margin="0,0,0,20"/>
+
+            <Label Text="Nome do Produto:" />
+            <Entry Text="{Binding Nome}" 
+                   Placeholder="Ex: Bolo de Cenoura" 
+                   ClearButtonVisibility="WhileEditing" />
+
+            <Label Text="Preço (R$):" />
+            <Entry Text="{Binding Preco}" 
+                   Placeholder="Ex: 5,00" 
+                   Keyboard="Numeric" 
+                   ClearButtonVisibility="WhileEditing" />
+
+            <!-- O Botão de Ligar/Desligar Controle -->
+            <HorizontalStackLayout Spacing="10" Margin="0,10,0,10" VerticalOptions="Center">
+                <Switch IsToggled="{Binding ControlaEstoque}" />
+                <Label Text="Controlar Estoque desse produto?"
+                       VerticalOptions="Center" />
+            </HorizontalStackLayout>
+
+            <!-- O Campo de Quantidade (Some e aparece dinamicamente!) -->
+            <VerticalStackLayout IsVisible="{Binding ControlaEstoque}" Spacing="5">
+                
+                <Label Text="Quantidade Inicial:" />
+                <Entry Text="{Binding Quantidade}" 
+                       Placeholder="Ex: 10" 
+                       Keyboard="Numeric" 
+                       ClearButtonVisibility="WhileEditing" />
+                
+            </VerticalStackLayout>
+
+            <!-- SEÇÃO FICHA TÉCNICA / COMPOSIÇÃO -->
+            <Border StrokeShape="RoundRectangle 10" 
+        BackgroundColor="White" 
+        Padding="15" 
+        Margin="0,10,0,0">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Ficha Técnica (Composição de Estoque)" 
+               FontAttributes="Bold" 
+               FontSize="16" 
+               TextColor="#7B2332" />
+
+                    <Label Text="Se este item consome estoque de outro produto (ex: Pão Francês), adicione-o abaixo:" 
+               FontSize="12" 
+               TextColor="Gray" />
+
+                    <!-- Seleção de Insumo e Quantidade -->
+                    <Grid ColumnDefinitions="*, Auto, Auto" ColumnSpacing="8">
+                        <!-- Picker de produtos insumos -->
+                        <Picker Grid.Column="0"
+                                Title="Selecione o Insumo"
+                                ItemsSource="{Binding InsumosDisponiveis}"
+                                ItemDisplayBinding="{Binding Nome}"
+                                SelectedItem="{Binding InsumoSelecionado}"
+                                BackgroundColor="#7B2332"/>
+
+                        <!-- Quantidade usada (ex: 0,5 ou 1) -->
+                        <Entry Grid.Column="1"
+                               Text="{Binding QtdIngredienteTexto}"
+                               TextColor="#7B2332"
+                               Placeholder="Qtd"
+                               WidthRequest="60"
+                               Keyboard="Numeric"
+                               HorizontalTextAlignment="Center" />
+
+                        <!-- Botão Adicionar -->
+                        <Button Grid.Column="2"
+                                Text="+"
+                                Command="{Binding AdicionarIngredienteCommand}"
+                                BackgroundColor="#7B2332"
+                                TextColor="White"
+                                FontAttributes="Bold"
+                                WidthRequest="45" />
+                    </Grid>
+
+                    <!-- Lista de Ingredientes Adicionados (BindableLayout) -->
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding ListaIngredientes}" 
+                                         Spacing="5" 
+                                         Margin="0,10,0,0">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <Grid ColumnDefinitions="*, Auto, Auto" Padding="5">
+                                    <Label Grid.Column="0" 
+                                           Text="{Binding NomeInsumo}" 
+                                           VerticalOptions="Center" 
+                                           TextColor="Black" />
+
+                                    <Label Grid.Column="1" 
+                                           Text="{Binding QuantidadeConsumida,
+                                           StringFormat='Consome: {0:N1} un'}" 
+                                           VerticalOptions="Center" 
+                                           Margin="10,0" 
+                                           TextColor="Gray" />
+
+                                    <Button Grid.Column="2" 
+                                            Text="X" 
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}},
+                                                    Path=BindingContext.RemoverIngredienteCommand}"
+                                            CommandParameter="{Binding .}"
+                                            BackgroundColor="Red" 
+                                            TextColor="White" 
+                                            HeightRequest="30" 
+                                            WidthRequest="30" 
+                                            Padding="0" />
+                                </Grid>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Botão Salvar Produto -->
+            <Button Text="Salvar Produto" 
+                    Command="{Binding SalvarProdutoCommand}" 
+                    Margin="0,20,0,0"
+                    BackgroundColor="#2196F3"
+                    TextColor="White"
+                    FontAttributes="Bold"
+                    CornerRadius="8"
+                    HeightRequest="50"/>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

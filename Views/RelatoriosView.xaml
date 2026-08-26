@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:CafeMissionario.ViewModels"
+             x:Class="CafeMissionario.Views.RelatoriosView"
+             BackgroundColor="#F5F5F7">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="20" Padding="20" MaximumWidthRequest="600" HorizontalOptions="Center">
+
+            <!-- Filtro de Data -->
+            <Border StrokeShape="RoundRectangle 12" BackgroundColor="White" Stroke="#E0E0E0" Padding="15,10">
+                <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
+                    <Label Text="Filtrar por Data:" FontAttributes="Bold" FontSize="15" VerticalOptions="Center" TextColor="#1C1C1E"/>
+                    <DatePicker Grid.Column="1" Date="{Binding DataFiltro}" Format="dd/MM/yyyy" TextColor="#7B2332" FontAttributes="Bold" />
+                </Grid>
+            </Border>
+
+            <!-- Cards de Métricas Rápidas -->
+            <Grid ColumnDefinitions="*, *" ColumnSpacing="15">
+
+                <!-- Card 1: Total Faturado -->
+                <Border Grid.Column="0" StrokeShape="RoundRectangle 16" BackgroundColor="#7B2332" StrokeThickness="0" Padding="15">
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="Faturamento" TextColor="#E0E0E0" FontSize="13" />
+                        <Label Text="{Binding FaturamentoTotal, StringFormat='R$ {0:F2}'}" TextColor="White" FontAttributes="Bold" FontSize="20" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Card 2: Qtd Pedidos -->
+                <Border Grid.Column="1"
+                        StrokeShape="RoundRectangle 16"
+                        BackgroundColor="White"
+                        Stroke="#E0E0E0"
+                        Padding="15">
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="Total de Pedidos"
+                               TextColor="#6E6E73" FontSize="13" />
+                        
+                        <Label Text="{Binding TotalPedidos}"
+                               TextColor="#1C1C1E" FontAttributes="Bold" FontSize="20" />
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
+
+            <!-- Detalhamento por Forma de Pagamento -->
+            <Border StrokeShape="RoundRectangle 16"
+                    BackgroundColor="White"
+                    Stroke="#E0E0E0"
+                    Padding="20">
+                <VerticalStackLayout Spacing="15">
+                    
+                    <Label Text="Faturamento por Forma de Pagamento"
+                           FontAttributes="Bold"
+                           FontSize="16"
+                           TextColor="#1C1C1E" />
+
+                    <CollectionView ItemsSource="{Binding ResumoPagamentos}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid ColumnDefinitions="*, Auto"
+                                      Padding="0,8">
+                                    
+                                    <Label Grid.Column="0"
+                                           Text="{Binding FormaPagamento}"
+                                           TextColor="#1C1C1E"
+                                           FontSize="14"/>
+                                    
+                                    <Label Grid.Column="1"
+                                           Text="{Binding Total, StringFormat='R$ {0:F2}'}"
+                                           FontAttributes="Bold"
+                                           TextColor="#7B2332" FontSize="14"/>
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

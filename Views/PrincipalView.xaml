@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="CafeMissionario.Views.PrincipalView"
+             BackgroundColor="#7B2332">
+    <VerticalStackLayout Spacing="30" Padding="20"
+                         MaximumWidthRequest="480">
+        
+        <Image Source="logo_cafe_nobg.png" 
+               HorizontalOptions="Center"
+               HeightRequest="250"
+               WidthRequest="200"/>
+
+        <Grid ColumnDefinitions="*, *" RowDefinitions="*, *"
+              HorizontalOptions="Center"
+              ColumnSpacing="40">
+            
+            <!-- Carrinho/Pedidos -->
+            <Image Source="carrinho.png"
+                   Grid.Column="0"
+                   Grid.Row="0"
+                   HorizontalOptions="Center"
+                   HeightRequest="150"
+                   WidthRequest="100">
+                <Image.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding AbrirTelaCommand}"
+                                          CommandParameter="PedidoView"/>
+                </Image.GestureRecognizers>
+            </Image>
+
+            <!-- Cardapio -->
+            <Image Source="cardapio.png"
+                   Grid.Column="1"
+                   Grid.Row="0"
+                   HorizontalOptions="Center"
+                   HeightRequest="150"
+                   WidthRequest="100">
+                <Image.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding AbrirTelaCommand}"
+                                          CommandParameter="ProdutoView"/>
+                </Image.GestureRecognizers>
+            </Image>
+
+            <!-- Relatórios -->
+            <Image Source="relatorio.png" 
+                   Grid.Column="0"
+                   Grid.Row="1"
+                   HorizontalOptions="Center"
+                   HeightRequest="150"
+                   WidthRequest="100">
+                <Image.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding AbrirTelaCommand}"
+                                          CommandParameter="RelatoriosView"/>
+                </Image.GestureRecognizers>
+            </Image>
+
+        </Grid>
+        
+    </VerticalStackLayout>
+</ContentPage>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="CafeMissionario.Views.LoginView">
+    <ScrollView>
+        <VerticalStackLayout Spacing="25" Padding="30,60,30,30" VerticalOptions="Center">
+
+            <!-- Nome do Usuário -->
+            <Border Stroke="{StaticResource BordaInput}" 
+                StrokeThickness="1" 
+                BackgroundColor="Black" 
+                StrokeShape="RoundRectangle 10" 
+                Padding="15,2">
+                
+                
+                <Entry Text="{Binding Nome}"
+                   Placeholder="Nome de Usuário"
+                   BackgroundColor="Transparent"
+                   HeightRequest="50"
+                   Keyboard="Text"/>
+            </Border>
+
+            <!-- Senha do Usuário -->
+            <Border Stroke="{StaticResource BordaInput}" 
+                StrokeThickness="1" 
+                BackgroundColor="{StaticResource FundoInput}" 
+                StrokeShape="RoundRectangle 10" 
+                Padding="15,2">
+                
+                <Entry Text="{Binding Senha}"
+                   Placeholder="Sua Senha"
+                   BackgroundColor="Transparent"
+                   IsPassword="True"
+                   HeightRequest="50"
+                   Keyboard="Text"/>
+            </Border>
+
+            <!-- Botão de Entrar -->
+            <Button Command="{Binding LogarCommand}"
+                Text="ENTRAR"
+                BackgroundColor="#D4AF37" 
+                TextColor="#121212"
+                FontAttributes="Bold"
+                HeightRequest="55"
+                CornerRadius="10"
+                Margin="0,10,0,0"/>
+
+            <!-- Link para Cadastro -->
+            <Label HorizontalOptions="Center" Margin="0,10,0,0">
+                <Label.FormattedText>
+                    <FormattedString>
+                        <Span Text="Não possui uma conta? " TextColor="{StaticResource TextoSecundario}"/>
+                        <Span Text="Cadastre-se"
+                          FontAttributes="Bold"
+                          TextColor="#D4AF37"
+                          TextDecorations="Underline"/>
+                    </FormattedString>
+                </Label.FormattedText>
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding AbrirTelaCommand}"
+                                          CommandParameter="UsuarioCadView"/>
+                </Label.GestureRecognizers>
+            </Label>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

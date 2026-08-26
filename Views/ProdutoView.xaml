@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="CafeMissionario.Views.ProdutoView"
+             BackgroundColor="#7B2332">
+    <Grid RowDefinitions="Auto, *, Auto">
+
+        <!-- Barra de pesquisa -->
+        <SearchBar Grid.Row="0"
+                       Text="{Binding TextoBusca}"
+                       Placeholder="Buscar produto (ex: Capuccino)"
+                       BackgroundColor="White"
+                       TextColor="#7B2332"
+                       CancelButtonColor="#7B2332"
+                       SearchIconColor="#7B2332"
+                       SearchCommand="{Binding ConsultarProdutosCommand}"/>
+
+        <!-- Lista dos Produtos Cadastrados -->
+        <CollectionView Grid.Row="1" ItemsSource="{Binding ListaProdutos}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+
+                    <!-- Cartãozinho branco para cada produto com cantos arredondados -->
+                    <Border StrokeShape="RoundRectangle 10" 
+                            BackgroundColor="White" 
+                            Padding="15" 
+                            Margin="0, 0, 0, 10">
+
+                        <!-- Gesto de clique no card -->
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}},
+                                Path=BindingContext.EditarProdutoCommand}"
+                              CommandParameter="{Binding .}" />
+                        </Border.GestureRecognizers>
+
+                        <Grid ColumnDefinitions="*, Auto">
+
+                            <!-- Lado Esquerdo: Informações do Produto -->
+                            <VerticalStackLayout Grid.Column="0" VerticalOptions="Center">
+                                
+                                <!-- Nome do Produto-->
+                                <Label Text="{Binding Nome}"
+                                       FontAttributes="Bold"
+                                       TextColor="Black"
+                                       FontSize="16"/>
+                                
+                                <!-- Preço do Produto -->
+                                <Label Text="{Binding Preco, StringFormat='R$ {0:F2}'}"
+                                       TextColor="Gray"
+                                       FontSize="14"/>
+                                
+                                <!-- Estoque do Produto -->
+                                <Label Text="{Binding QuantidadeEstoque, StringFormat='•  Estoque: {0} un'}"
+                                       IsVisible="{Binding ControlaEstoque}"
+                                       TextColor="#B00020"
+                                       FontAttributes="Bold"
+                                       FontSize="14"/>
+                            </VerticalStackLayout>
+
+                            <!-- Lado Direito: Botão de Apagar -->
+                            <HorizontalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                <!-- Coloquei um botão de texto caso a imagem lixeirarecompensa.png dê problema -->
+                                <ImageButton Source="lixeirarecompensa.png" 
+                                             HeightRequest="30" 
+                                             WidthRequest="30"
+                                             Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}},
+                                                Path=BindingContext.ExcluirProdutoCommand}"
+                                             CommandParameter="{Binding .}"/>
+                            </HorizontalStackLayout>
+
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- Botões Voltar e Cadastrar -->
+        <Grid Grid.Row="2" ColumnDefinitions="*, *" ColumnSpacing="15">
+
+            <!-- Botão Voltar (Coluna 0) -->
+            <Button Grid.Column="0"
+                    Text="Voltar"
+                    Command="{Binding AbrirTelaCommand}"
+                    CommandParameter="PrincipalView"
+                    BackgroundColor="Transparent"
+                    BorderColor="#F2E3D5"
+                    BorderWidth="2"
+                    TextColor="#F2E3D5"
+                    FontAttributes="Bold"
+                    CornerRadius="25"/>
+
+            <!-- Botão Cadastrar (Coluna 1) -->
+            <Button Grid.Column="1"
+                    Text="+ Cadastrar"
+                    Command="{Binding AbrirTelaCommand}"
+                    CommandParameter="ProdutoCadView"
+                    BackgroundColor="#F2E3D5"
+                    TextColor="#7B2332"
+                    FontAttributes="Bold"
+                    CornerRadius="25"/>
+
+        </Grid>
+
+    </Grid>
+</ContentPage>

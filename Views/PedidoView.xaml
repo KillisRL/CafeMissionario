@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:CafeMissionario.ViewModels"
+             x:Class="CafeMissionario.Views.PedidoView"
+             BackgroundColor="#7B2332">
+
+    <Grid RowDefinitions="*, Auto, Auto">
+
+        <!-- Lista de Produtos -->
+        <CollectionView Grid.Row="0" 
+                        ItemsSource="{Binding ListaProdutos}" 
+                        Margin="15,10,15,5">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Border StrokeShape="RoundRectangle 12"
+                            Stroke="#E0E0E0"
+                            BackgroundColor="White"
+                            Padding="15,12"
+                            Margin="0,0,0,10">
+                        <Grid ColumnDefinitions="*, Auto">
+
+                            <!-- Nome e Preço -->
+                            <VerticalStackLayout Grid.Column="0" VerticalOptions="Center" Spacing="2">
+                                <Label Text="{Binding ProdutoBase.Nome}"
+                                       FontAttributes="Bold"
+                                       FontSize="16"
+                                       TextColor="#1C1C1E" />
+                                <Label Text="{Binding ProdutoBase.Preco, StringFormat='R$ {0:F2}'}"
+                                       TextColor="#6E6E73"
+                                       FontSize="14" />
+                            </VerticalStackLayout>
+
+                            <!-- Botões de Adicionar / Remover -->
+                            <HorizontalStackLayout Grid.Column="1" Spacing="8" VerticalOptions="Center">
+                                <Button Text="-" 
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:PedidoViewModel}}, Path=RemoverCommand}"
+                                        CommandParameter="{Binding .}"
+                                        BackgroundColor="#E5E5EA"
+                                        TextColor="#7B2332"
+                                        FontAttributes="Bold"
+                                        FontSize="18"
+                                        CornerRadius="8"
+                                        WidthRequest="36"
+                                        HeightRequest="36"
+                                        Padding="0" />
+
+                                <Label Text="{Binding QuantidadeSelecionada}" 
+                                       VerticalOptions="Center" 
+                                       HorizontalTextAlignment="Center"
+                                       FontSize="16" 
+                                       FontAttributes="Bold"
+                                       TextColor="#1C1C1E"
+                                       WidthRequest="28" />
+
+                                <Button Text="+" 
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:PedidoViewModel}}, Path=AdicionarCommand}"
+                                        CommandParameter="{Binding .}"
+                                        BackgroundColor="#7B2332"
+                                        TextColor="White"
+                                        FontAttributes="Bold"
+                                        FontSize="18"
+                                        CornerRadius="8"
+                                        WidthRequest="36"
+                                        HeightRequest="36"
+                                        Padding="0" />
+                            </HorizontalStackLayout>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- Informações do Cliente -->
+        <VerticalStackLayout Grid.Row="1" Padding="15,5,15,10" Spacing="10">
+            <Border StrokeShape="RoundRectangle 10" 
+                    Stroke="#E0E0E0" 
+                    BackgroundColor="White" 
+                    Padding="12,2">
+                <Entry Text="{Binding NomeCliente}"
+                       Placeholder="Nome do Cliente"
+                       PlaceholderColor="#A1A1A6"
+                       TextColor="#1C1C1E" />
+            </Border>
+
+            <Border StrokeShape="RoundRectangle 10" 
+                    Stroke="#E0E0E0" 
+                    BackgroundColor="White" 
+                    Padding="12,2">
+                <Picker Title="Selecione a Forma de Pagamento"
+                        TitleColor="#A1A1A6"
+                        TextColor="White"
+                        BackgroundColor="#7B2332"
+                        ItemsSource="{Binding FormasPagamentoOpcoes}"
+                        SelectedItem="{Binding FormaPagamento}" />
+            </Border>
+        </VerticalStackLayout>
+
+        <!-- Painel de Fechamento do Pedido -->
+        <Border Grid.Row="2" 
+                StrokeShape="RoundRectangle 16,16,0,0" 
+                BackgroundColor="White" 
+                StrokeThickness="0"
+                Padding="20,15">
+            <VerticalStackLayout Spacing="12">
+                <Grid ColumnDefinitions="*, Auto">
+                    <Label Grid.Column="0" 
+                           Text="Total do Pedido" 
+                           FontSize="15" 
+                           TextColor="#6E6E73" 
+                           VerticalOptions="Center" />
+
+                    <Label Grid.Column="1" 
+                           Text="{Binding ValorTotal, StringFormat='R$ {0:F2}'}" 
+                           FontSize="22" 
+                           FontAttributes="Bold" 
+                           TextColor="#7B2332" />
+                </Grid>
+
+                <Button Text="Finalizar e Copiar"
+                        Command="{Binding SalvarPedidoCommand}"
+                        BackgroundColor="#7B2332"
+                        TextColor="White"
+                        FontAttributes="Bold"
+                        FontSize="16"
+                        CornerRadius="10"
+                        HeightRequest="48" />
+            </VerticalStackLayout>
+        </Border>
+
+    </Grid>
+</ContentPage>
