@@ -10,5 +10,6 @@ namespace CafeMissionario.Models
         public decimal Total { get; set; }
         public string FormaPagamento { get; set; } = string.Empty;
         public DateTime DataHora { get; set; } = DateTime.Now;
+        public string Vendedor { get; set; } = string.Empty;
     }
 }

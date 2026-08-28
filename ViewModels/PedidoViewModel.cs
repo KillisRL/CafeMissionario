@@ -22,6 +22,7 @@ namespace CafeMissionario.ViewModels
         [ObservableProperty] private decimal _valorTotal;
         [ObservableProperty] private string _nomeCliente = string.Empty;
         [ObservableProperty] private string _formaPagamento = string.Empty;
+        [ObservableProperty] private string _vendedor = string.Empty;
 
         public List<string> FormasPagamentoOpcoes { get; } = new()
         {
@@ -116,12 +117,17 @@ namespace CafeMissionario.ViewModels
             // Salvar no Banco de Dados
             using (var db = new AppDbContext())
             {
+
+                var vendedor = SessaoSistema.UsuarioAtual.Nome;
+
                 var pedido = new Pedido()
                 {
                     NomeCliente = this.NomeCliente,
                     Total = this.ValorTotal,
                     FormaPagamento = this.FormaPagamento,
-                    DataHora = DateTime.Now
+                    DataHora = DateTime.Now,
+                    Vendedor = vendedor
+
                 };
 
                 db.Pedidos.Add(pedido);

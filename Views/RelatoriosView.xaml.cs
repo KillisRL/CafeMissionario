@@ -4,11 +4,9 @@ namespace CafeMissionario.Views;
 
 public partial class RelatoriosView : ContentPage
 {
-    private readonly RelatoriosViewModel _viewModel;
 	public RelatoriosView(RelatoriosViewModel viewModel)
 	{
 		InitializeComponent();
-        _viewModel = viewModel;
         BindingContext = viewModel;
 	}
 

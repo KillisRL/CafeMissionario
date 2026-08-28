@@ -9,10 +9,25 @@
         <VerticalStackLayout Spacing="20" Padding="20" MaximumWidthRequest="600" HorizontalOptions="Center">
 
             <!-- Filtro de Data -->
-            <Border StrokeShape="RoundRectangle 12" BackgroundColor="White" Stroke="#E0E0E0" Padding="15,10">
-                <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
-                    <Label Text="Filtrar por Data:" FontAttributes="Bold" FontSize="15" VerticalOptions="Center" TextColor="#1C1C1E"/>
-                    <DatePicker Grid.Column="1" Date="{Binding DataFiltro}" Format="dd/MM/yyyy" TextColor="#7B2332" FontAttributes="Bold" />
+            <Border StrokeShape="RoundRectangle 12"
+                    BackgroundColor="White"
+                    Stroke="#E0E0E0"
+                    Padding="15,10">
+                
+                <Grid ColumnDefinitions="*, Auto"
+                      VerticalOptions="Center">
+                    
+                    <Label Text="Filtrar por Data:"
+                           FontAttributes="Bold"
+                           FontSize="15"
+                           VerticalOptions="Center"
+                           TextColor="#1C1C1E"/>
+                    
+                    <DatePicker Grid.Column="1"
+                                Date="{Binding DataFiltro}"
+                                Format="dd/MM/yyyy"
+                                TextColor="#7B2332"
+                                FontAttributes="Bold" />
                 </Grid>
             </Border>
 
@@ -20,10 +35,23 @@
             <Grid ColumnDefinitions="*, *" ColumnSpacing="15">
 
                 <!-- Card 1: Total Faturado -->
-                <Border Grid.Column="0" StrokeShape="RoundRectangle 16" BackgroundColor="#7B2332" StrokeThickness="0" Padding="15">
+                <Border Grid.Column="0"
+                        StrokeShape="RoundRectangle 16"
+                        BackgroundColor="#7B2332"
+                        StrokeThickness="0"
+                        Padding="15">
+                    
                     <VerticalStackLayout Spacing="5">
                         <Label Text="Faturamento" TextColor="#E0E0E0" FontSize="13" />
-                        <Label Text="{Binding FaturamentoTotal, StringFormat='R$ {0:F2}'}" TextColor="White" FontAttributes="Bold" FontSize="20" />
+                        <Label Text="{Binding FaturamentoTotal, StringFormat='R$ {0:F2}'}"
+                               TextColor="White"
+                               FontAttributes="Bold"
+                               FontSize="20" />
+                        <Label Text="{Binding Vendedor}"
+                               TextColor="White"
+                               FontAttributes="Bold"
+                               FontSize="20"/>
+
                     </VerticalStackLayout>
                 </Border>
 
@@ -38,7 +66,9 @@
                                TextColor="#6E6E73" FontSize="13" />
                         
                         <Label Text="{Binding TotalPedidos}"
-                               TextColor="#1C1C1E" FontAttributes="Bold" FontSize="20" />
+                               TextColor="#1C1C1E"
+                               FontAttributes="Bold"
+                               FontSize="20" />
                     </VerticalStackLayout>
                 </Border>
             </Grid>

@@ -13,28 +13,25 @@ namespace CafeMissionario.ViewModels
 
     public partial class RelatoriosViewModel : BaseViewModel
     {
-        [ObservableProperty]
-        private DateTime _dataFiltro = DateTime.Today;
+        // Propriedades
+        [ObservableProperty] private DateTime _dataFiltro = DateTime.Today;
+        [ObservableProperty] private decimal _faturamentoTotal;
+        [ObservableProperty] private int _totalPedidos;
+        [ObservableProperty] private List<VendaPorFormaPagamento> _resumoPagamentos = new();
 
-        [ObservableProperty]
-        private decimal _faturamentoTotal;
-
-        [ObservableProperty]
-        private int _totalPedidos;
-
-        [ObservableProperty]
-        private List<VendaPorFormaPagamento> _resumoPagamentos = new();
-
+        // Construtor
         public RelatoriosViewModel()
         {
             CarregarRelatório();
         }
 
+        // Métodos
         partial void OnDataFiltroChanged(DateTime value)
         {
             CarregarRelatório();
         }
 
+        // Comandos
         [RelayCommand]
         public void CarregarRelatório()
         {
@@ -50,6 +47,7 @@ namespace CafeMissionario.ViewModels
 
             TotalPedidos = pedidosDoDia.Count;
             FaturamentoTotal = pedidosDoDia.Sum(p => p.Total);
+
 
             ResumoPagamentos = pedidosDoDia
                 .GroupBy(p => p.FormaPagamento)

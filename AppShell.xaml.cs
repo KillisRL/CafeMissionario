@@ -14,6 +14,7 @@
             Routing.RegisterRoute(nameof(Views.ProdutoCadView), typeof(Views.ProdutoCadView));
             Routing.RegisterRoute(nameof(Views.ProdutoView), typeof(Views.ProdutoView));
             Routing.RegisterRoute(nameof(Views.RelatoriosView), typeof(Views.RelatoriosView));
+            Routing.RegisterRoute(nameof(Views.VendasDiaView), typeof(Views.VendasDiaView));
         }
     }
 }

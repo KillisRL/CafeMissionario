@@ -46,18 +46,18 @@
 
             <!-- SEÇÃO FICHA TÉCNICA / COMPOSIÇÃO -->
             <Border StrokeShape="RoundRectangle 10" 
-        BackgroundColor="White" 
-        Padding="15" 
-        Margin="0,10,0,0">
+                    BackgroundColor="White" 
+                    Padding="15" 
+                    Margin="0,10,0,0">
                 <VerticalStackLayout Spacing="10">
                     <Label Text="Ficha Técnica (Composição de Estoque)" 
-               FontAttributes="Bold" 
-               FontSize="16" 
-               TextColor="#7B2332" />
+                           FontAttributes="Bold" 
+                           FontSize="16" 
+                           TextColor="#7B2332" />
 
                     <Label Text="Se este item consome estoque de outro produto (ex: Pão Francês), adicione-o abaixo:" 
-               FontSize="12" 
-               TextColor="Gray" />
+                           FontSize="12" 
+                           TextColor="Gray" />
 
                     <!-- Seleção de Insumo e Quantidade -->
                     <Grid ColumnDefinitions="*, Auto, Auto" ColumnSpacing="8">

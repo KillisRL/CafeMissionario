@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="CafeMissionario.Views.LoginView">
+             x:Class="CafeMissionario.Views.LoginView"
+             BackgroundColor="#7B2332">
     <ScrollView>
         <VerticalStackLayout Spacing="25" Padding="30,60,30,30" VerticalOptions="Center">
 
             <!-- Nome do Usuário -->
             <Border Stroke="{StaticResource BordaInput}" 
-                StrokeThickness="1" 
-                BackgroundColor="Black" 
+                StrokeThickness="1"
                 StrokeShape="RoundRectangle 10" 
                 Padding="15,2">
                 
@@ -36,10 +36,10 @@
             </Border>
 
             <!-- Botão de Entrar -->
-            <Button Command="{Binding LogarCommand}"
+            <Button Command="{Binding LoginCommand}"
                 Text="ENTRAR"
-                BackgroundColor="#D4AF37" 
-                TextColor="#121212"
+                BackgroundColor="#E0E0E0" 
+                TextColor="#7B2332"
                 FontAttributes="Bold"
                 HeightRequest="55"
                 CornerRadius="10"
@@ -49,11 +49,11 @@
             <Label HorizontalOptions="Center" Margin="0,10,0,0">
                 <Label.FormattedText>
                     <FormattedString>
-                        <Span Text="Não possui uma conta? " TextColor="{StaticResource TextoSecundario}"/>
+                        <Span Text="Não possui uma conta? "/>
                         <Span Text="Cadastre-se"
-                          FontAttributes="Bold"
-                          TextColor="#D4AF37"
-                          TextDecorations="Underline"/>
+                              TextColor="White"
+                              FontAttributes="Bold"
+                              TextDecorations="Underline"/>
                     </FormattedString>
                 </Label.FormattedText>
                 <Label.GestureRecognizers>

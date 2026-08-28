@@ -7,6 +7,8 @@ namespace CafeMissionario
         public App()
         {
             InitializeComponent();
+
+            CafeMissionario.Helpers.DbInitializer.Init();
         }
 
         protected override Window CreateWindow(IActivationState? activationState)

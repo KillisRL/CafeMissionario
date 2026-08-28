@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="CafeMissionario.Views.VendasDiaView"
+             Title="Vendas de Hoje"
+             BackgroundColor="#7B2332">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="15" 
+                             Padding="20" 
+                             MaximumWidthRequest="500">
+
+            <!-- Card Resumo -->
+            <Border StrokeShape="RoundRectangle 12" 
+                    BackgroundColor="#5E1A26"
+                    StrokeThickness="0" Padding="15">
+                <Grid ColumnDefinitions="*, Auto">
+                    
+                    <VerticalStackLayout Grid.Column="0">
+                        
+                        <Label Text="Total Vendido Hoje"
+                               TextColor="#D1D1D6" FontSize="12"/>
+                        <Label Text="{Binding TotalAcumuladoHoje, StringFormat='R$ {0:F2}'}" 
+                               TextColor="White"
+                               FontAttributes="Bold"
+                               FontSize="22"/>
+                        
+                    </VerticalStackLayout>
+                    
+                    <Label Grid.Column="1"
+                           Text="{Binding VendasHoje.Count, StringFormat='{0} vendas'}" 
+                           TextColor="#E0E0E0"
+                           VerticalOptions="Center"
+                           FontSize="14"/>
+                </Grid>
+            </Border>
+
+            <!-- Lista de Vendas -->
+            <CollectionView ItemsSource="{Binding VendasHoje}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        
+                        <Border StrokeShape="RoundRectangle 10"
+                                BackgroundColor="White"
+                                Padding="12"
+                                Margin="0,0,0,10">
+                            
+                            <Grid ColumnDefinitions="*, Auto"
+                                  RowDefinitions="Auto, Auto"
+                                  RowSpacing="4">
+                                
+                                <HorizontalStackLayout Grid.Column="0"
+                                                       Grid.Row="0"
+                                                       Spacing="5">
+                                    
+                                    <Label Text="{Binding Cliente}"
+                                           FontAttributes="Bold"
+                                           TextColor="#1C1C1E"/>
+                                                                        
+                                    <Label Text="{Binding HoraFormatada, StringFormat='({0})'}"
+                                           TextColor="#8E8E93"
+                                           FontSize="12"
+                                           VerticalOptions="Center"/>
+                                    
+                                </HorizontalStackLayout>
+
+                                <Label Grid.Column="1"
+                                       Grid.Row="0"
+                                       Text="{Binding Total, StringFormat='R$ {0:F2}'}" 
+                                       FontAttributes="Bold"
+                                       TextColor="#7B2332"/>
+
+                                <HorizontalStackLayout Grid.Column="0"
+                                                       Grid.Row="1"
+                                                       Grid.ColumnSpan="2"
+                                                       Spacing="8">
+                                    
+                                    <Label Text="{Binding Vendedor, StringFormat='Vendedor: {0}'}"
+                                           TextColor="#6E6E73"
+                                           FontSize="12"/>
+                                    
+                                    <Label Text="•"
+                                           TextColor="#C7C7CC"
+                                           FontSize="12"/>
+                                    
+                                    <Label Text="{Binding FormaPagamento}"
+                                           TextColor="#6E6E73"
+                                           FontSize="12"/>
+                                    
+                                </HorizontalStackLayout>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+
+                <CollectionView.EmptyView>
+                    <Label Text="Nenhuma venda realizada hoje."
+                           TextColor="White"
+                           HorizontalOptions="Center"
+                           Margin="0,30"/>
+                </CollectionView.EmptyView>
+            </CollectionView>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

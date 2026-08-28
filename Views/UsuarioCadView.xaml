@@ -1,11 +1,77 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="CafeMissionario.Views.UsuarioCadView">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+             x:Class="CafeMissionario.Views.UsuarioCadView"
+             BackgroundColor="#7B2332">
+    <ScrollView>
+        <VerticalStackLayout Spacing="15"
+                             Padding="30"
+                             MaximumWidthRequest="500"
+                             HorizontalOptions="Center">
+
+            <Label Text="Novo Colaborador"
+                   FontSize="24"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"
+                   Margin="0,0,0,20"/>
+
+            <Label Text="Nome do Colaborador:" />
+
+            <Border StrokeShape="RoundRectangle 10"
+                    StrokeThickness="2"
+                    Stroke="#E0E0E0">
+                
+                <Entry Text="{Binding Nome}" 
+                       Placeholder="Ex: Bolo de Cenoura" 
+                       ClearButtonVisibility="WhileEditing" />
+            </Border>
+
+            <Label Text="Senha" 
+                   FontAttributes="Bold"
+                   TextColor="#E0E0E0"/>
+
+            <Border StrokeShape="RoundRectangle 10"
+                    Stroke="#E0E0E0"
+                    StrokeThickness="2">
+
+                <Entry Text="{Binding Senha}"
+                           Placeholder="*******" 
+                           Keyboard="Text"
+                           IsPassword="True"
+                           ClearButtonVisibility="WhileEditing"/>
+
+            </Border>
+
+
+
+            <Grid ColumnDefinitions="*, *" ColumnSpacing="10">
+                <!-- Botão Cancelar Cadastro -->
+                <Button Text="Cancelar"
+                        Grid.Column="0"
+                        Command="{Binding AbrirTelaCommand}" 
+                        CommandParameter="LoginView"
+                        Margin="0,20,0,0"
+                        BackgroundColor="Transparent"
+                        BorderColor="Red"
+                        BorderWidth="2"
+                        TextColor="Red"
+                        FontAttributes="Bold"
+                        CornerRadius="8"
+                        HeightRequest="50"/>
+
+                <!-- Botão Salvar Cadastro -->
+                <Button Text="Cadastrar"
+                        Grid.Column="1"
+                        Command="{Binding SalvarCadastroCommand}" 
+                        Margin="0,20,0,0"
+                        Padding="10"
+                        BackgroundColor="#E0E0E0"
+                        TextColor="#7B2332"
+                        FontAttributes="Bold"
+                        CornerRadius="8"
+                        HeightRequest="50"/>
+            </Grid>
+
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

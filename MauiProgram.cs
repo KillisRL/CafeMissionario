@@ -29,6 +29,7 @@ namespace CafeMissionario
             builder.Services.AddTransient<ProdutoCadViewModel>();
             builder.Services.AddTransient<ProdutoViewModel>();
             builder.Services.AddTransient<RelatoriosViewModel>();
+            builder.Services.AddTransient<VendasDiaViewModel>();
 
             // BUILDER VIEWS
             builder.Services.AddTransient<SplashScreen>();
@@ -39,6 +40,7 @@ namespace CafeMissionario
             builder.Services.AddTransient<ProdutoCadView>();
             builder.Services.AddTransient<ProdutoView>();
             builder.Services.AddTransient<RelatoriosView>();
+            builder.Services.AddTransient<VendasDiaView>();
 
             return builder.Build();
         }
