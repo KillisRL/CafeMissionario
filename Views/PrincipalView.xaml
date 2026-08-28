@@ -3,103 +3,116 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="CafeMissionario.Views.PrincipalView"
              BackgroundColor="#7B2332">
-    <VerticalStackLayout Spacing="30" Padding="20"
-                         MaximumWidthRequest="480">
+    <ScrollView>
+        <VerticalStackLayout Spacing="30" Padding="20"
+                     MaximumWidthRequest="480">
 
-        <!-- CABEÇALHO COM O NOME DO USUÁRIO LOGADO -->
-        <Border StrokeShape="RoundRectangle 12" 
-                    BackgroundColor="#5E1A26" 
-                    StrokeThickness="0" 
-                    Padding="15,10">
-            
-            <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
-                <VerticalStackLayout Grid.Column="0" Spacing="2">
-                    <Label Text="Operador Ativo"
-                           FontSize="11"
-                           TextColor="#D1D1D6" />
-                    
-                    <Label Text="{Binding NomeUsuario}"
-                           FontAttributes="Bold"
-                           FontSize="16"
-                           TextColor="White" />
-                </VerticalStackLayout>
+            <!-- CABEÇALHO COM O NOME DO USUÁRIO LOGADO -->
+            <Border StrokeShape="RoundRectangle 12" 
+                BackgroundColor="#5E1A26" 
+                StrokeThickness="0" 
+                Padding="15,10">
 
-                <!-- Emblema com o Perfil (Admin / Colaborador) -->
-                <Border Grid.Column="1" 
-                            StrokeShape="RoundRectangle 8" 
-                            BackgroundColor="#E0E0E0" 
-                            Padding="8,4" 
-                            VerticalOptions="Center">
-                    
-                    <Label Text="{Binding CargoUsuario}" FontSize="11"
-                           FontAttributes="Bold"
-                           TextColor="#7B2332" />
-                </Border>
-            </Grid>
-        </Border>
+                <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
+                    <VerticalStackLayout Grid.Column="0" Spacing="2">
+                        <Label Text="Operador Ativo"
+                       FontSize="11"
+                       TextColor="#D1D1D6" />
 
-        <Image Source="logo_cafe_nobg.png" 
+                        <Label Text="{Binding NomeUsuario}"
+                       FontAttributes="Bold"
+                       FontSize="16"
+                       TextColor="White" />
+                    </VerticalStackLayout>
+
+                    <!-- Emblema com o Perfil (Admin / Colaborador) -->
+                    <Border Grid.Column="1" 
+                        StrokeShape="RoundRectangle 8" 
+                        BackgroundColor="#E0E0E0" 
+                        Padding="8,4" 
+                        VerticalOptions="Center">
+
+                        <Label Text="{Binding CargoUsuario}" FontSize="11"
+                       FontAttributes="Bold"
+                       TextColor="#7B2332" />
+                    </Border>
+                </Grid>
+            </Border>
+
+            <Image Source="logo_cafe_nobg.png" 
+           HorizontalOptions="Center"
+           HeightRequest="250"
+           WidthRequest="200"/>
+
+            <Grid ColumnDefinitions="*, *" RowDefinitions="*, *"
+          HorizontalOptions="Center"
+          ColumnSpacing="40">
+
+                <!-- Carrinho/Pedidos -->
+                <Image Source="carrinho.png"
+               Grid.Column="0"
+               Grid.Row="0"
                HorizontalOptions="Center"
-               HeightRequest="250"
-               WidthRequest="200"/>
+               HeightRequest="150"
+               WidthRequest="100">
+                    <Image.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding AbrirTelaCommand}"
+                                      CommandParameter="PedidoView"/>
+                    </Image.GestureRecognizers>
+                </Image>
 
-        <Grid ColumnDefinitions="*, *" RowDefinitions="*, *"
-              HorizontalOptions="Center"
-              ColumnSpacing="40">
-            
-            <!-- Carrinho/Pedidos -->
-            <Image Source="carrinho.png"
-                   Grid.Column="0"
-                   Grid.Row="0"
-                   HorizontalOptions="Center"
-                   HeightRequest="150"
-                   WidthRequest="100">
-                <Image.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding AbrirTelaCommand}"
-                                          CommandParameter="PedidoView"/>
-                </Image.GestureRecognizers>
-            </Image>
+                <!-- Cardapio -->
+                <Image Source="cardapio.png"
+               Grid.Column="1"
+               Grid.Row="0"
+               HorizontalOptions="Center"
+               HeightRequest="150"
+               WidthRequest="100">
+                    <Image.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding AbrirTelaCommand}"
+                                      CommandParameter="ProdutoView"/>
+                    </Image.GestureRecognizers>
+                </Image>
 
-            <!-- Cardapio -->
-            <Image Source="cardapio.png"
-                   Grid.Column="1"
-                   Grid.Row="0"
-                   HorizontalOptions="Center"
-                   HeightRequest="150"
-                   WidthRequest="100">
-                <Image.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding AbrirTelaCommand}"
-                                          CommandParameter="ProdutoView"/>
-                </Image.GestureRecognizers>
-            </Image>
+                <!-- Relatórios -->
+                <Image Source="relatorio.png" 
+               Grid.Column="0"
+               Grid.Row="1"
+               HorizontalOptions="Center"
+               HeightRequest="150"
+               WidthRequest="100"
+               IsEnabled="{Binding IsAdm}">
+                    <Image.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding AbrirTelaCommand}"
+                                      CommandParameter="RelatoriosView"/>
+                    </Image.GestureRecognizers>
 
-            <!-- Relatórios -->
-            <Image Source="relatorio.png" 
-                   Grid.Column="0"
-                   Grid.Row="1"
-                   HorizontalOptions="Center"
-                   HeightRequest="150"
-                   WidthRequest="100">
-                <Image.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding AbrirTelaCommand}"
-                                          CommandParameter="RelatoriosView"/>
-                </Image.GestureRecognizers>
-            </Image>
+                    <Image.Triggers>
+                        <Trigger TargetType="Image"
+                         Property="IsEnabled"
+                         Value="False">
+                            <Setter Property="Opacity"
+                            Value="0.3" />
+                        </Trigger>
+                    </Image.Triggers>
+                </Image>
 
-            <!-- Vendas do Dia -->
-            <Image Source="lupa.png" 
-                   Grid.Column="1"
-                   Grid.Row="1"
-                   HorizontalOptions="Center"
-                   HeightRequest="150"
-                   WidthRequest="100">
-                <Image.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding AbrirTelaCommand}"
-                                          CommandParameter="VendasDiaView"/>
-                </Image.GestureRecognizers>
-            </Image>
+                <!-- Vendas do Dia -->
+                <Image Source="lupa.png" 
+               Grid.Column="1"
+               Grid.Row="1"
+               HorizontalOptions="Center"
+               HeightRequest="150"
+               WidthRequest="100">
+                    <Image.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding AbrirTelaCommand}"
+                                      CommandParameter="VendasDiaView"/>
+                    </Image.GestureRecognizers>
+                </Image>
 
-        </Grid>
-        
-    </VerticalStackLayout>
+            </Grid>
+
+        </VerticalStackLayout>
+    </ScrollView>
+    
 </ContentPage>

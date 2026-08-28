@@ -47,6 +47,7 @@ namespace CafeMissionario.ViewModels
             await db.SaveChangesAsync();
 
             await Shell.Current.DisplayAlertAsync("Informação", "Usuário Cadastrado Com Sucesso!", "Ok");
+            await Shell.Current.GoToAsync("LoginView");
 
             Nome = string.Empty;
             Senha = string.Empty;

@@ -6,14 +6,11 @@ namespace CafeMissionario.ViewModels
     public partial class BaseViewModel : ObservableObject
     {
         // Propriedades
-        [ObservableProperty]
-        private bool _isBusy;
+        [ObservableProperty] private bool _isAdm;
 
-        [ObservableProperty]
-        private string _nomeUsuario = string.Empty;
+        [ObservableProperty] private string _nomeUsuario = string.Empty;
 
-        [ObservableProperty]
-        private string _title = string.Empty;
+        [ObservableProperty] private string _title = string.Empty;
 
         // Construtor
         public BaseViewModel()
@@ -25,7 +22,18 @@ namespace CafeMissionario.ViewModels
         [RelayCommand]
         private async Task AbrirTela(string nomeTela)
         {
-            await Shell.Current.GoToAsync(nomeTela);
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(nomeTela))
+                {
+                    await Shell.Current.GoToAsync(nomeTela);
+                }
+            }
+            catch
+            {
+                await Shell.Current.DisplayAlertAsync("Erro", "Não foi possível abrir a tela", "Ok");
+            }
+            
         }
     }
 }

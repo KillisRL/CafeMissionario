@@ -2,39 +2,47 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="CafeMissionario.Views.SplashScreen"
-             BackgroundColor="#6B2332">
-    <!-- Centraliza todo o conteúdo na tela -->
-    <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="40" Padding="30">
+             BackgroundColor="#7B2332">
+    <ScrollView>
+        <Grid RowDefinitions="*, Auto, Auto" Padding="20">
 
-        <!-- O Logotipo e o Nome -->
-        <VerticalStackLayout Spacing="10" HorizontalOptions="Center">
-            <!-- A imagem da xícara (certifique-se de adicionar logo_cafe.png aos Resources) -->
-            <Image Source="logo_cafe_nobg.png" 
-                   HeightRequest="250" 
-                   WidthRequest="250" 
+
+            <Image Source="logo_cafe_nobg.png"
+                   Grid.Row="0"
+                   HeightRequest="280" 
+                   WidthRequest="280"
+                   Aspect="AspectFit"
+                   Margin="0,0,0,20"
                    HorizontalOptions="Center"/>
 
-            <Label Text="CAFÉ" 
-                   FontSize="40" 
-                   FontAttributes="Bold" 
-                   TextColor="#F2E3D5" 
-                   HorizontalOptions="Center" 
-                   CharacterSpacing="2"/>
+            <!-- LINHA 0: Logo e Textos (Flutuando no centro do espaço de cima) -->
+            <VerticalStackLayout Grid.Row="1"
+                                 VerticalOptions="Center"
+                                 HorizontalOptions="Center">
 
-            <Label Text="MISSIONÁRIO" 
-                   FontSize="40" 
-                   FontAttributes="Bold" 
-                   TextColor="#F2E3D5" 
-                   HorizontalOptions="Center" 
-                   CharacterSpacing="2"/>
-        </VerticalStackLayout>
 
-        <!-- Os Botões de Acesso -->
-        <VerticalStackLayout Spacing="20" Margin="0, 30, 0, 0">
+                <Label Text="CAFÉ" 
+                       FontSize="40" 
+                       FontAttributes="Bold" 
+                       TextColor="#F2E3D5"
+                       HorizontalOptions="Center" />
 
-            <!-- Botão Secundário: Acesso Rápido (Visitante) -->
-            <!-- Usamos fundo transparente e borda para não roubar muito o peso visual -->
-            <Button Text="Acesso Rápido (Visitante)" 
+                <Label Text="MISSIONÁRIO" 
+                       FontSize="40" 
+                       FontAttributes="Bold" 
+                       TextColor="#F2E3D5" 
+                       HorizontalOptions="Center" 
+                       CharacterSpacing="2"/>
+            </VerticalStackLayout>
+
+            <!-- LINHA 1: Botões (Ancorados fixos no final da tela) -->
+            <VerticalStackLayout Grid.Row="2" 
+                             Spacing="15" 
+                             HorizontalOptions="Center"
+                             Padding="0, 20, 0, 20">
+
+                <!-- Botão Secundário: Acesso Rápido (Visitante) -->
+                <Button Text="Acesso Rápido (Visitante)" 
                     Command="{Binding AbrirTelaCommand}" 
                     CommandParameter="PrincipalView"
                     BackgroundColor="Transparent"
@@ -43,22 +51,22 @@
                     TextColor="#F2E3D5"
                     FontAttributes="Bold"
                     CornerRadius="25"
-                    HeightRequest="55"
+                    HeightRequest="50"
                     WidthRequest="300"/>
 
-            <!-- Botão Principal: Login Cadastrado -->
-            <!-- Usamos o bege da letra da camisa como fundo para destacar -->
-            <Button Text="Sou Colaborador" 
+                <!-- Botão Principal: Login Cadastrado -->
+                <Button Text="Sou Colaborador" 
                     Command="{Binding AbrirTelaCommand}" 
                     CommandParameter="LoginView"
                     BackgroundColor="#F2E3D5"
                     TextColor="#6B2332"
                     FontAttributes="Bold"
                     CornerRadius="25"
-                    HeightRequest="55"
+                    HeightRequest="50"
                     WidthRequest="300"/>
 
-        </VerticalStackLayout>
+            </VerticalStackLayout>
 
-    </VerticalStackLayout>
+        </Grid>
+    </ScrollView>
 </ContentPage>

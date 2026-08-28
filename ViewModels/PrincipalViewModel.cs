@@ -9,8 +9,10 @@ namespace CafeMissionario.ViewModels
     public partial class PrincipalViewModel : BaseViewModel
     {
         // Propriedades
-        [ObservableProperty] private string _nomeUsuario = "Usuário";
-        [ObservableProperty] private string _cargoUsuario = "Colaborador";
+        [ObservableProperty] private string _nomeUsuario = "Xicrinha";
+        [ObservableProperty] private string _cargoUsuario = "Visitante";
+        [ObservableProperty] private bool _isAdm = false;
+        [ObservableProperty] private bool _isColaborador = false;
 
         // Métodos
         public void CarregarUuario()
@@ -23,10 +25,35 @@ namespace CafeMissionario.ViewModels
 
         }
 
+        public void ValidarPermissao()
+        {
+            try
+            {
+                if (SessaoSistema.UsuarioAtual != null)
+                {
+                    IsAdm = (SessaoSistema.UsuarioAtual.Tipo.ToString() ==
+                        UsuarioTipo.Administrador.ToString());
+
+                    IsColaborador = (SessaoSistema.UsuarioAtual.Tipo.ToString() !=
+                        UsuarioTipo.Administrador.ToString());
+                }
+                else
+                {
+                    IsAdm = false;
+                    IsColaborador = false;
+                }
+            }
+            catch
+            {
+                Shell.Current.DisplayAlertAsync("Atenção", "Não foi encontrado o tipo de usuário", "Ok");
+            }
+        }
+
         // Construtor
         public PrincipalViewModel()
         {
             CarregarUuario();
+            ValidarPermissao();
         }
     }
 }

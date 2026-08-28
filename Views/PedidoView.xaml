@@ -11,11 +11,12 @@
         <CollectionView Grid.Row="0" 
                         ItemsSource="{Binding ListaProdutos}" 
                         Margin="15,10,15,5">
+            
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <Border StrokeShape="RoundRectangle 12"
                             Stroke="#E0E0E0"
-                            BackgroundColor="White"
+                            BackgroundColor="#E0E0E0"
                             Padding="15,12"
                             Margin="0,0,0,10">
                         <Grid ColumnDefinitions="*, Auto">
@@ -75,7 +76,7 @@
         <VerticalStackLayout Grid.Row="1" Padding="15,5,15,10" Spacing="10">
             <Border StrokeShape="RoundRectangle 10" 
                     Stroke="#E0E0E0" 
-                    BackgroundColor="White" 
+                    BackgroundColor="#E0E0E0" 
                     Padding="12,2">
                 <Entry Text="{Binding NomeCliente}"
                        Placeholder="Nome do Cliente"
@@ -85,11 +86,11 @@
 
             <Border StrokeShape="RoundRectangle 10" 
                     Stroke="#E0E0E0" 
-                    BackgroundColor="White" 
+                    BackgroundColor="#E0E0E0" 
                     Padding="12,2">
                 <Picker Title="Selecione a Forma de Pagamento"
                         TitleColor="#A1A1A6"
-                        TextColor="White"
+                        TextColor="#E0E0E0"
                         BackgroundColor="#7B2332"
                         ItemsSource="{Binding FormasPagamentoOpcoes}"
                         SelectedItem="{Binding FormaPagamento}" />
@@ -99,7 +100,7 @@
         <!-- Painel de Fechamento do Pedido -->
         <Border Grid.Row="2" 
                 StrokeShape="RoundRectangle 16,16,0,0" 
-                BackgroundColor="White" 
+                BackgroundColor="#E0E0E0" 
                 StrokeThickness="0"
                 Padding="20,15">
             <VerticalStackLayout Spacing="12">
@@ -120,7 +121,7 @@
                 <Button Text="Finalizar e Copiar"
                         Command="{Binding SalvarPedidoCommand}"
                         BackgroundColor="#7B2332"
-                        TextColor="White"
+                        TextColor="#E0E0E0"
                         FontAttributes="Bold"
                         FontSize="16"
                         CornerRadius="10"

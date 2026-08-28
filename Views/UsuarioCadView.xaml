@@ -10,6 +10,7 @@
                              HorizontalOptions="Center">
 
             <Label Text="Novo Colaborador"
+                   TextColor="#E0E0E0"
                    FontSize="24"
                    FontAttributes="Bold"
                    HorizontalOptions="Center"
@@ -22,6 +23,7 @@
                     Stroke="#E0E0E0">
                 
                 <Entry Text="{Binding Nome}" 
+                       TextColor="#E0E0E0"
                        Placeholder="Ex: Bolo de Cenoura" 
                        ClearButtonVisibility="WhileEditing" />
             </Border>
@@ -35,6 +37,7 @@
                     StrokeThickness="2">
 
                 <Entry Text="{Binding Senha}"
+                       TextColor="#E0E0E0"
                            Placeholder="*******" 
                            Keyboard="Text"
                            IsPassword="True"

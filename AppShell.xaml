@@ -8,7 +8,6 @@
     Title="CafeMissionario">
 
     <ShellContent
-        Title="Home"
         ContentTemplate="{DataTemplate views:SplashScreen}"
         Route="MainPage" />
 

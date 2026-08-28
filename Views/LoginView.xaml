@@ -7,25 +7,25 @@
         <VerticalStackLayout Spacing="25" Padding="30,60,30,30" VerticalOptions="Center">
 
             <!-- Nome do Usuário -->
-            <Border Stroke="{StaticResource BordaInput}" 
-                StrokeThickness="1"
-                StrokeShape="RoundRectangle 10" 
-                Padding="15,2">
+            <Border StrokeThickness="2"
+                    Stroke="#E0E0E0"
+                    StrokeShape="RoundRectangle 10" 
+                    Padding="15,2">
                 
                 
                 <Entry Text="{Binding Nome}"
-                   Placeholder="Nome de Usuário"
-                   BackgroundColor="Transparent"
-                   HeightRequest="50"
-                   Keyboard="Text"/>
+                       Placeholder="Nome de Usuário"
+                       BackgroundColor="Transparent"
+                       HeightRequest="50"
+                       Keyboard="Text"/>
             </Border>
 
             <!-- Senha do Usuário -->
-            <Border Stroke="{StaticResource BordaInput}" 
-                StrokeThickness="1" 
-                BackgroundColor="{StaticResource FundoInput}" 
-                StrokeShape="RoundRectangle 10" 
-                Padding="15,2">
+
+            <Border Stroke="#E0E0E0"
+                    StrokeThickness="2" 
+                    StrokeShape="RoundRectangle 10" 
+                    Padding="15,2">
                 
                 <Entry Text="{Binding Senha}"
                    Placeholder="Sua Senha"
@@ -49,9 +49,10 @@
             <Label HorizontalOptions="Center" Margin="0,10,0,0">
                 <Label.FormattedText>
                     <FormattedString>
-                        <Span Text="Não possui uma conta? "/>
+                        <Span Text="Não possui uma conta? "
+                              TextColor="#E0E0E0"/>
                         <Span Text="Cadastre-se"
-                              TextColor="White"
+                              TextColor="#E0E0E0"
                               FontAttributes="Bold"
                               TextDecorations="Underline"/>
                     </FormattedString>
