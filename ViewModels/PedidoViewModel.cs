@@ -13,6 +13,8 @@ namespace CafeMissionario.ViewModels
         public int ProdutoId { get; set; }
         public string Nome { get; set; } = string.Empty;
         public decimal Preco { get; set; }
+        public decimal QuantidadeEstoque { get; set; }
+        public bool ControlaEstoque { get; set; }
         [ObservableProperty] private int _quantidadeSelecionada;
     }
     public partial class PedidoViewModel : BaseViewModel
@@ -55,6 +57,7 @@ namespace CafeMissionario.ViewModels
                     ProdutoId = p.Id,
                     Nome = p.Nome,
                     Preco = p.Preco,
+                    QuantidadeEstoque = p.QuantidadeEstoque,
                     QuantidadeSelecionada = 0
                 });
             }
@@ -66,12 +69,110 @@ namespace CafeMissionario.ViewModels
             ValorTotal = ListaProdutos.Sum(i => i.QuantidadeSelecionada * i.ProdutoBase.Preco);
         }
 
+        #region ValidarEstoqueCarrinho
+        private bool ValidarEstoqueCarrinho(ItemCardapio itemDesejado)
+        {
+            using var db = new AppDbContext();
+
+            // 1. Descobrir o que o clique atual vai consumir (Lista de Necessidades)
+            // Usamos um Dicionário: Key = ID do Insumo, Value = Quantidade Necessária
+            var necessidadesDesteClique = new Dictionary<int, decimal>();
+
+            var receitaDoClique = db.FichasTecnicas
+                                    .Where(f => f.ProdutoId == itemDesejado.ProdutoId)
+                                    .ToList();
+
+            if (receitaDoClique.Any())
+            {
+                // Se é PRODUTO FABRICADO, adiciona todos os ingredientes da receita dele
+                foreach (var ing in receitaDoClique)
+                {
+                    necessidadesDesteClique.Add(ing.InsumoId, ing.QuantidadeConsumida);
+                }
+            }
+            else
+            {
+                // Se é VENDA DIRETA, o produto consome a si mesmo (1 unidade)
+                necessidadesDesteClique.Add(itemDesejado.ProdutoId, 1);
+            }
+
+            // 2. Otimização: Carregar as receitas dos itens que já estão no carrinho de uma vez só
+            var itensNoCarrinho = ListaProdutos.Where(i => i.QuantidadeSelecionada > 0).ToList();
+            var idsNoCarrinho = itensNoCarrinho.Select(i => i.ProdutoId).ToList();
+            var receitasDoCarrinho = db.FichasTecnicas
+                                       .Where(f => idsNoCarrinho.Contains(f.ProdutoId))
+                                       .ToList();
+
+            // 3. Validar se o estoque aguenta a soma do (Carrinho + Clique Atual)
+            foreach (var necessidade in necessidadesDesteClique)
+            {
+                int insumoId = necessidade.Key;
+                decimal qtdNecessariaParaUm = necessidade.Value;
+
+                var insumoNoBanco = db.Produtos.Find(insumoId);
+
+                // Só fazemos a barreira se o produto estiver marcado para controlar estoque
+                if (insumoNoBanco != null && insumoNoBanco.ControlaEstoque)
+                {
+                    decimal totalJaNoCarrinho = 0;
+
+                    foreach (var itemCar in itensNoCarrinho)
+                    {
+                        // Busca a receita do item que está no carrinho
+                        var receitaDesteItem = receitasDoCarrinho.Where(f => f.ProdutoId == itemCar.ProdutoId).ToList();
+
+                        if (receitaDesteItem.Any())
+                        {
+                            // Se o item do carrinho é fabricado, verifica se ele USA o insumo que estamos validando
+                            var uso = receitaDesteItem.FirstOrDefault(r => r.InsumoId == insumoId);
+                            if (uso != null)
+                            {
+                                totalJaNoCarrinho += (uso.QuantidadeConsumida * itemCar.QuantidadeSelecionada);
+                            }
+                        }
+                        else
+                        {
+                            // Se o item do carrinho é venda direta, verifica se ele É o próprio insumo
+                            if (itemCar.ProdutoId == insumoId)
+                            {
+                                totalJaNoCarrinho += itemCar.QuantidadeSelecionada;
+                            }
+                        }
+                    }
+
+                    // A MÁGICA ACONTECE AQUI: Soma o consumo indireto + direto + clique
+                    decimal necessidadeFutura = totalJaNoCarrinho + qtdNecessariaParaUm;
+
+                    // Se estourar o banco, bloqueia na hora!
+                    if (necessidadeFutura > insumoNoBanco.QuantidadeEstoque)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true; // Passou em todas as validações de todos os insumos
+        }
+        #endregion
+
+
         // Comandos
         [RelayCommand]
-        private void Adicionar(ItemCardapio item)
+        private async Task Adicionar(ItemCardapio item)
         {
-            item.QuantidadeSelecionada++;
-            CalcularTotal();
+            // Chama a regra de negócio para validar o estoque real
+            bool temEstoque = ValidarEstoqueCarrinho(item);
+
+            if (temEstoque)
+            {
+                item.QuantidadeSelecionada++;
+                CalcularTotal();
+            }
+            else
+            {
+                await Shell.Current.DisplayAlertAsync("Estoque Insuficiente",
+                    $"Não há insumos suficientes para preparar mais um(a) {item.Nome}.", "OK");
+            }
         }
 
         [RelayCommand]
@@ -118,7 +219,7 @@ namespace CafeMissionario.ViewModels
             using (var db = new AppDbContext())
             {
 
-                var vendedor = SessaoSistema.UsuarioAtual.Nome;
+                var vendedor = SessaoSistema.UsuarioAtual?.Nome ?? "Visitante";
 
                 var pedido = new Pedido()
                 {
@@ -131,6 +232,21 @@ namespace CafeMissionario.ViewModels
                 };
 
                 db.Pedidos.Add(pedido);
+                await db.SaveChangesAsync();
+
+                foreach (var item in itensComprados)
+                {
+                    var pedidoItem = new PedidoItem()
+                    {
+                        PedidoId = pedido.Id,
+                        NomeProduto = item.ProdutoBase.Nome,
+                        Quantidade = item.QuantidadeSelecionada,
+                        Preco = item.ProdutoBase.Preco
+                    };
+
+                    db.ItensPedido.Add(pedidoItem);
+                }
+          
                 await db.SaveChangesAsync();
             }
 

@@ -5,6 +5,11 @@ using System.Collections.ObjectModel;
 
 namespace CafeMissionario.ViewModels
 {
+    public class ProdutoVendidoResumo
+    {
+        public string NomeProduto { get; set; } = string.Empty;
+        public int Quantidade { get; set; }
+    }
     public class PedidoDiaItem
     {
         public int Id { get; set; }
@@ -18,9 +23,13 @@ namespace CafeMissionario.ViewModels
 
     public partial class VendasDiaViewModel : BaseViewModel
     {
+        // Propriedades
         [ObservableProperty] private ObservableCollection<PedidoDiaItem> _vendasHoje = new();
         [ObservableProperty] private decimal _totalAcumuladoHoje;
+        [ObservableProperty] private ObservableCollection<ProdutoVendidoResumo> _resumoProdutos = new();
+        [ObservableProperty] private int _totalItensVendidos;
 
+        // Comandos
         [RelayCommand]
         public void CarregarVendasHoje()
         {
@@ -52,6 +61,25 @@ namespace CafeMissionario.ViewModels
                 }
 
                 TotalAcumuladoHoje = VendasHoje.Sum(v => v.Total);
+
+                var itensAgrupados = db.ItensPedido
+                    .Where(i => i.Pedido.DataHora >= inicioDia && i.Pedido.DataHora <= fimDia)
+                    .GroupBy(i => i.NomeProduto)
+                    .Select(g => new ProdutoVendidoResumo
+                    {
+                        NomeProduto = g.Key,
+                        Quantidade = g.Sum(i => i.Quantidade)
+                    })
+                    .OrderByDescending(r => r.Quantidade)
+                    .ToList();
+
+                ResumoProdutos.Clear();
+                foreach (var item in itensAgrupados)
+                {
+                    ResumoProdutos.Add(item);
+                }
+
+                TotalItensVendidos = ResumoProdutos.Sum(r => r.Quantidade);
             }
             catch (Exception ex)
             {

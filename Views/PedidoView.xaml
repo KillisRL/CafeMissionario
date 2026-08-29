@@ -30,6 +30,10 @@
                                 <Label Text="{Binding ProdutoBase.Preco, StringFormat='R$ {0:F2}'}"
                                        TextColor="#6E6E73"
                                        FontSize="14" />
+                                <Label Text="{Binding ProdutoBase.QuantidadeEstoque, StringFormat='Estoque: {0:F1} un'}"
+                                       TextColor="#7B2332"
+                                       IsVisible="{Binding ProdutoBase.ControlaEstoque}"
+                                       FontSize="14"/>
                             </VerticalStackLayout>
 
                             <!-- Botões de Adicionar / Remover -->
