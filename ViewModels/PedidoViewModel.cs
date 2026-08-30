@@ -3,6 +3,7 @@ using CafeMissionario.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
+using System.ComponentModel.Design;
 using System.Globalization;
 
 namespace CafeMissionario.ViewModels
@@ -15,6 +16,9 @@ namespace CafeMissionario.ViewModels
         public decimal Preco { get; set; }
         public decimal QuantidadeEstoque { get; set; }
         public bool ControlaEstoque { get; set; }
+        [ObservableProperty] public bool _exibirInsumo = true;
+        [ObservableProperty] public bool _exibirMsg = true;
+        [ObservableProperty] public string _insumo = string.Empty;
         [ObservableProperty] private int _quantidadeSelecionada;
     }
     public partial class PedidoViewModel : BaseViewModel
@@ -25,6 +29,7 @@ namespace CafeMissionario.ViewModels
         [ObservableProperty] private string _nomeCliente = string.Empty;
         [ObservableProperty] private string _formaPagamento = string.Empty;
         [ObservableProperty] private string _vendedor = string.Empty;
+
 
         public List<string> FormasPagamentoOpcoes { get; } = new()
         {
@@ -41,7 +46,10 @@ namespace CafeMissionario.ViewModels
             CarregarCardapio();
         }
 
+        #region Metodos
         // Métodos
+
+        #region CarregarCardapio
         public void CarregarCardapio()
         {
             using var db = new AppDbContext();
@@ -51,17 +59,66 @@ namespace CafeMissionario.ViewModels
 
             foreach (var p in produtosDoBanco)
             {
-                ListaProdutos.Add(new ItemCardapio
+                // Buscar Ficha Técnica (PONTO DE ATENÇÃO PARA CORREÇÃO FUTURA)
+                var receita = db.FichasTecnicas
+                    .Where(f => f.ProdutoId == p.Id)
+                    .ToList();
+                string nomeInsumo = string.Empty;
+                foreach (var insumo in receita)
                 {
-                    ProdutoBase = p,
-                    ProdutoId = p.Id,
-                    Nome = p.Nome,
-                    Preco = p.Preco,
-                    QuantidadeEstoque = p.QuantidadeEstoque,
-                    QuantidadeSelecionada = 0
-                });
+                    var insumoNoBanco = db.Produtos.Find(insumo.InsumoId);
+                    if (insumoNoBanco != null && insumoNoBanco.ControlaEstoque)
+                    {
+                        nomeInsumo = insumoNoBanco.Nome;
+                    }
+                }
+
+                if (p.ControlaEstoque == true)
+                {
+                    ListaProdutos.Add(new ItemCardapio
+                    {
+                        ProdutoBase = p,
+                        ProdutoId = p.Id,
+                        Nome = p.Nome,
+                        Preco = p.Preco,
+                        QuantidadeEstoque = p.QuantidadeEstoque,
+                        ExibirInsumo = false,
+                        ExibirMsg = false,
+                        QuantidadeSelecionada = 0
+                    });
+                }
+                else if (p.ControlaEstoque != true && !string.IsNullOrEmpty(nomeInsumo.Trim()))
+                {
+                    ListaProdutos.Add(new ItemCardapio
+                    {
+                        ProdutoBase = p,
+                        ProdutoId = p.Id,
+                        Nome = p.Nome,
+                        Preco = p.Preco,
+                        QuantidadeEstoque = p.QuantidadeEstoque,
+                        ExibirInsumo = true,
+                        ExibirMsg = false,
+                        Insumo = nomeInsumo,
+                        QuantidadeSelecionada = 0
+                    });
+                }
+                else
+                {
+                    ListaProdutos.Add(new ItemCardapio
+                    {
+                        ProdutoBase = p,
+                        ProdutoId = p.Id,
+                        Nome = p.Nome,
+                        Preco = p.Preco,
+                        QuantidadeEstoque = p.QuantidadeEstoque,
+                        ExibirInsumo = false,
+                        ExibirMsg = true,
+                        QuantidadeSelecionada = 0
+                    });
+                }
             }
         }
+        #endregion
 
         private void CalcularTotal()
         {
@@ -155,6 +212,48 @@ namespace CafeMissionario.ViewModels
         }
         #endregion
 
+        public async Task BaixarEstoqueDoPedido(List<ItemCardapio> itensVendidos)
+        {
+            using var db = new AppDbContext();
+
+            foreach (var item in itensVendidos)
+            {
+                // Busca a receita (Ficha Técnica) deste item
+                var receita = db.FichasTecnicas
+                                .Where(f => f.ProdutoId == item.ProdutoId)
+                                .ToList();
+
+                if (receita.Any())
+                {
+                    // Se tem ficha técnica, desconta do insumo base (Ex: Pão Francês)
+                    foreach (var ingrediente in receita)
+                    {
+                        var insumoNoBanco = db.Produtos.Find(ingrediente.InsumoId);
+                        if (insumoNoBanco != null && insumoNoBanco.ControlaEstoque)
+                        {
+                            decimal totalAbater = ingrediente.QuantidadeConsumida * item.QuantidadeSelecionada;
+                            insumoNoBanco.QuantidadeEstoque -= totalAbater;
+                            db.Produtos.Update(insumoNoBanco);
+                        }
+                    }
+                }
+                else
+                {
+                    // Se não tem ficha técnica, desconta do próprio produto se ele controlar estoque
+                    var produtoNoBanco = db.Produtos.Find(item.ProdutoId);
+                    if (produtoNoBanco != null && produtoNoBanco.ControlaEstoque)
+                    {
+                        produtoNoBanco.QuantidadeEstoque -= item.QuantidadeSelecionada;
+                        db.Produtos.Update(produtoNoBanco);
+                    }
+                }
+            }
+
+            await db.SaveChangesAsync();
+        }
+
+        #endregion
+
 
         // Comandos
         [RelayCommand]
@@ -185,6 +284,7 @@ namespace CafeMissionario.ViewModels
             }
         }
 
+        #region SalvarPedido
         [RelayCommand]
         private async Task SalvarPedido()
         {
@@ -246,7 +346,7 @@ namespace CafeMissionario.ViewModels
 
                     db.ItensPedido.Add(pedidoItem);
                 }
-          
+
                 await db.SaveChangesAsync();
             }
 
@@ -260,45 +360,8 @@ namespace CafeMissionario.ViewModels
             FormaPagamento = string.Empty;
             CarregarCardapio();
         }
+        #endregion
 
-        public async Task BaixarEstoqueDoPedido(List<ItemCardapio> itensVendidos)
-        {
-            using var db = new AppDbContext();
 
-            foreach (var item in itensVendidos)
-            {
-                // Busca a receita (Ficha Técnica) deste item
-                var receita = db.FichasTecnicas
-                                .Where(f => f.ProdutoId == item.ProdutoId)
-                                .ToList();
-
-                if (receita.Any())
-                {
-                    // Se tem ficha técnica, desconta do insumo base (Ex: Pão Francês)
-                    foreach (var ingrediente in receita)
-                    {
-                        var insumoNoBanco = db.Produtos.Find(ingrediente.InsumoId);
-                        if (insumoNoBanco != null && insumoNoBanco.ControlaEstoque)
-                        {
-                            decimal totalAbater = ingrediente.QuantidadeConsumida * item.QuantidadeSelecionada;
-                            insumoNoBanco.QuantidadeEstoque -= totalAbater;
-                            db.Produtos.Update(insumoNoBanco);
-                        }
-                    }
-                }
-                else
-                {
-                    // Se não tem ficha técnica, desconta do próprio produto se ele controlar estoque
-                    var produtoNoBanco = db.Produtos.Find(item.ProdutoId);
-                    if (produtoNoBanco != null && produtoNoBanco.ControlaEstoque)
-                    {
-                        produtoNoBanco.QuantidadeEstoque -= item.QuantidadeSelecionada;
-                        db.Produtos.Update(produtoNoBanco);
-                    }
-                }
-            }
-
-            await db.SaveChangesAsync();
-        }
     }
 }

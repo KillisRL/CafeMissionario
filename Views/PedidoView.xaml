@@ -32,7 +32,18 @@
                                        FontSize="14" />
                                 <Label Text="{Binding ProdutoBase.QuantidadeEstoque, StringFormat='Estoque: {0:F1} un'}"
                                        TextColor="#7B2332"
+                                       FontAttributes="Bold"
                                        IsVisible="{Binding ProdutoBase.ControlaEstoque}"
+                                       FontSize="14"/>
+                                <Label Text="{Binding Insumo, StringFormat='Este Produto Não Controla Estoque (Insumo: {0})'}"
+                                       TextColor="#7B2332"
+                                       FontAttributes="Bold"
+                                       IsVisible="{Binding ExibirInsumo}"
+                                       FontSize="14"/>
+                                <Label Text="Este Produto Não Controla Estoque"
+                                       TextColor="#7B2332"
+                                       FontAttributes="Bold"
+                                       IsVisible="{Binding ExibirMsg}"
                                        FontSize="14"/>
                             </VerticalStackLayout>
 
