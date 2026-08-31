@@ -11,13 +11,4 @@ public partial class PedidoView : ContentPage
         _viewModel = viewModel;
 		BindingContext = viewModel;
     }
-    protected override void OnAppearing()
-    {
-        base.OnAppearing();
-
-        if (BindingContext is PedidoViewModel viewModel)
-        {
-            viewModel.CarregarCardapio();
-        }
-    }
 }

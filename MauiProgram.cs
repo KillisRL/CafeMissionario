@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using CafeMissionario.ViewModels;
 using CafeMissionario.Views;
+using Microsoft.Maui.LifecycleEvents;
 
 namespace CafeMissionario
 {
@@ -15,6 +16,27 @@ namespace CafeMissionario
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+                })
+                .ConfigureLifecycleEvents(events =>
+                {
+#if WINDOWS
+                    events.AddWindows(windowsLifecycleBuilder =>
+                    {
+                        windowsLifecycleBuilder.OnWindowCreated(window =>
+                        {
+                            // Pega o ID da janela nativa do Windows
+                            var handle = WinRT.Interop.WindowNative.GetWindowHandle(window);
+                            var id = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(handle);
+                            var appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(id);
+
+                            // Força a maximização
+                            if (appWindow.Presenter is Microsoft.UI.Windowing.OverlappedPresenter p)
+                            {
+                                p.Maximize();
+                            }
+                        });
+                    });
+#endif
                 });
 
 #if DEBUG

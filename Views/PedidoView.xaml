@@ -133,14 +133,33 @@
                            TextColor="#7B2332" />
                 </Grid>
 
-                <Button Text="Finalizar e Copiar"
-                        Command="{Binding SalvarPedidoCommand}"
-                        BackgroundColor="#7B2332"
-                        TextColor="#E0E0E0"
-                        FontAttributes="Bold"
-                        FontSize="16"
-                        CornerRadius="10"
-                        HeightRequest="48" />
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="20">
+                    <!-- Botão Voltar -->
+                    <Button Text="Voltar"
+                            BorderColor="#7B2332"
+                            BorderWidth="5"
+                            Grid.Column="0"
+                            Command="{Binding AbrirTelaCommand}"
+                            CommandParameter="PrincipalView"
+                            BackgroundColor="#E0E0E0"
+                            TextColor="#7B2332"
+                            FontAttributes="Bold"
+                            FontSize="16"
+                            CornerRadius="10"
+                            HeightRequest="48" />
+                    
+                    <!-- Botão Finalizar e Copiar -->
+                    <Button Text="Finalizar e Copiar"
+                            Grid.Column="1"
+                            Command="{Binding SalvarPedidoCommand}"
+                            BackgroundColor="#7B2332"
+                            TextColor="#E0E0E0"
+                            FontAttributes="Bold"
+                            FontSize="16"
+                            CornerRadius="10"
+                            HeightRequest="48" />
+                </Grid>
+               
             </VerticalStackLayout>
         </Border>
 

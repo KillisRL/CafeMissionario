@@ -21,6 +21,8 @@ namespace CafeMissionario.ViewModels
         [ObservableProperty] public string _insumo = string.Empty;
         [ObservableProperty] private int _quantidadeSelecionada;
     }
+
+    [QueryProperty(nameof(VendaParaEditar), "VendaParaEditar")]
     public partial class PedidoViewModel : BaseViewModel
     {
         // Propriedades
@@ -29,6 +31,8 @@ namespace CafeMissionario.ViewModels
         [ObservableProperty] private string _nomeCliente = string.Empty;
         [ObservableProperty] private string _formaPagamento = string.Empty;
         [ObservableProperty] private string _vendedor = string.Empty;
+        [ObservableProperty] private int _id;
+        [ObservableProperty] private Pedido _vendaParaEditar;
 
 
         public List<string> FormasPagamentoOpcoes { get; } = new()
@@ -252,6 +256,83 @@ namespace CafeMissionario.ViewModels
             await db.SaveChangesAsync();
         }
 
+        #region OnVendaParaEditarChanged
+        partial void OnVendaParaEditarChanged(Pedido value)
+        {
+            if (value != null)
+            {
+                Id = value.Id;
+                NomeCliente = value.NomeCliente;
+                FormaPagamento = value.FormaPagamento;
+                Vendedor = value.Vendedor;
+                ValorTotal = value.Total;
+
+                using var db = new AppDbContext();
+
+                // Busca os itens salvos deste pedido no banco
+                var itensSalvos = db.ItensPedido.Where(i => i.PedidoId == value.Id).ToList();
+
+                foreach (var item in itensSalvos)
+                {
+                    // Tenta achar pelo ID (para os pedidos novos)
+                    var itemNoCardapio = ListaProdutos.FirstOrDefault(p => p.ProdutoId == item.ProdutoId);
+
+                    // Se não achar pelo ID (ex: pedidos antigos com ID 0 no banco), acha pelo Nome!
+                    if (itemNoCardapio == null && !string.IsNullOrEmpty(item.NomeProduto))
+                    {
+                        itemNoCardapio = ListaProdutos.FirstOrDefault(p => p.ProdutoBase.Nome == item.NomeProduto);
+                    }
+
+                    if (itemNoCardapio != null)
+                    {
+                        itemNoCardapio.QuantidadeSelecionada = item.Quantidade;
+                    }
+                }
+            }
+            CalcularTotal();
+        }
+        #endregion
+
+        public async Task EstornarEstoquePedido(List<PedidoItem> itensVendidos)
+        {
+            using var db = new AppDbContext();
+
+            foreach (var item in itensVendidos)
+            {
+                // Busca a receita (Ficha Técnica) deste item
+                var receita = db.FichasTecnicas
+                                .Where(f => f.ProdutoId == item.ProdutoId)
+                                .ToList();
+
+                if (receita.Any())
+                {
+                    // Se tem ficha técnica, desconta do insumo base (Ex: Pão Francês)
+                    foreach (var ingrediente in receita)
+                    {
+                        var insumoNoBanco = db.Produtos.Find(ingrediente.InsumoId);
+                        if (insumoNoBanco != null && insumoNoBanco.ControlaEstoque)
+                        {
+                            decimal totalAbater = ingrediente.QuantidadeConsumida * item.Quantidade;
+                            insumoNoBanco.QuantidadeEstoque += totalAbater;
+                            db.Produtos.Update(insumoNoBanco);
+                        }
+                    }
+                }
+                else
+                {
+                    // Se não tem ficha técnica, desconta do próprio produto se ele controlar estoque
+                    var produtoNoBanco = db.Produtos.Find(item.ProdutoId);
+                    if (produtoNoBanco != null && produtoNoBanco.ControlaEstoque)
+                    {
+                        produtoNoBanco.QuantidadeEstoque += item.Quantidade;
+                        db.Produtos.Update(produtoNoBanco);
+                    }
+                }
+            }
+
+            await db.SaveChangesAsync();
+        }
+
         #endregion
 
 
@@ -288,6 +369,9 @@ namespace CafeMissionario.ViewModels
         [RelayCommand]
         private async Task SalvarPedido()
         {
+            // Criar coneão com o banco
+            using var db = new AppDbContext();
+
             if (string.IsNullOrWhiteSpace(NomeCliente) || string.IsNullOrWhiteSpace(FormaPagamento))
             {
                 await Shell.Current.DisplayAlertAsync("Atenção", "Preencha o Nome do Cliente ou Forma de Pagamento", "Ok");
@@ -300,10 +384,7 @@ namespace CafeMissionario.ViewModels
             {
                 await Shell.Current.DisplayAlertAsync("Aviso", "Selecione ao menos um item.", "OK");
                 return;
-            }
-
-            // Baixar Estoque
-            await BaixarEstoqueDoPedido(itensComprados);
+            }                   
 
             // Texto para copiar e colar no Whatsapp
             string textoParaCopiar = $"*NOVO PEDIDO*\n*Cliente:* {NomeCliente}\n*Forma de Pagamento:* {FormaPagamento}\n*Itens:*\n";
@@ -316,11 +397,47 @@ namespace CafeMissionario.ViewModels
             textoParaCopiar += $"\n*TOTAL: R$ {ValorTotal:F2}*";
 
             // Salvar no Banco de Dados
-            using (var db = new AppDbContext())
+            Pedido pedidoSalvo;
+
+            var vendedor = SessaoSistema.UsuarioAtual?.Nome ?? "Visitante";
+
+            if (Id > 0)
             {
+                pedidoSalvo = db.Pedidos.Find(Id);
+                if (pedidoSalvo != null)
+                {
+                    pedidoSalvo.NomeCliente = NomeCliente;
+                    pedidoSalvo.FormaPagamento = FormaPagamento;
+                    pedidoSalvo.Total = ValorTotal;
+                    pedidoSalvo.Vendedor = Vendedor;
+                    db.Pedidos.Update(pedidoSalvo);
 
-                var vendedor = SessaoSistema.UsuarioAtual?.Nome ?? "Visitante";
+                    // Estornar Estoque
+                    var itensAntigos =
+                        db.ItensPedido.Where(i => i.PedidoId == this.Id).ToList();
+                    await EstornarEstoquePedido(itensAntigos);
 
+                    db.ItensPedido.RemoveRange(itensAntigos);
+
+                    foreach (var item in itensComprados)
+                    {
+                        var pedidoItem = new PedidoItem()
+                        {
+                            PedidoId = pedidoSalvo.Id,
+                            NomeProduto = item.ProdutoBase.Nome,
+                            Quantidade = item.QuantidadeSelecionada,
+                            Preco = item.ProdutoBase.Preco,
+                            ProdutoId = item.ProdutoId
+                        };
+
+                        db.ItensPedido.Add(pedidoItem);
+                    }
+                }
+
+                await db.SaveChangesAsync();
+            }
+            else
+            {
                 var pedido = new Pedido()
                 {
                     NomeCliente = this.NomeCliente,
@@ -339,6 +456,7 @@ namespace CafeMissionario.ViewModels
                     var pedidoItem = new PedidoItem()
                     {
                         PedidoId = pedido.Id,
+                        ProdutoId = item.ProdutoId,
                         NomeProduto = item.ProdutoBase.Nome,
                         Quantidade = item.QuantidadeSelecionada,
                         Preco = item.ProdutoBase.Preco
@@ -350,15 +468,22 @@ namespace CafeMissionario.ViewModels
                 await db.SaveChangesAsync();
             }
 
+            // Baixar Estoque
+            await BaixarEstoqueDoPedido(itensComprados);
+
+
             // Copiar texto para área de transferência
             await Clipboard.Default.SetTextAsync(textoParaCopiar);
 
-            await Shell.Current.DisplayAlertAsync("Informação", "Pedido Finalizado e copiado para a área de transferência", "Ok");
+            await Shell.Current.DisplayAlertAsync("Informação", "Pedido Salvo e copiado para a área de transferência", "Ok");
 
             // Limpar a tela
+            Id = 0;
             NomeCliente = string.Empty;
             FormaPagamento = string.Empty;
             CarregarCardapio();
+
+            CalcularTotal();
         }
         #endregion
 
