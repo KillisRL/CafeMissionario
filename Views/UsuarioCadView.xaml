@@ -16,7 +16,9 @@
                    HorizontalOptions="Center"
                    Margin="0,0,0,20"/>
 
-            <Label Text="Nome do Colaborador:" />
+            <Label Text="Nome do Colaborador:"
+                   TextColor="#E0E0E0"
+                   FontAttributes="Bold"/>
 
             <Border StrokeShape="RoundRectangle 10"
                     StrokeThickness="2"
@@ -24,7 +26,7 @@
                 
                 <Entry Text="{Binding Nome}" 
                        TextColor="#E0E0E0"
-                       Placeholder="Ex: Bolo de Cenoura" 
+                       Placeholder="Ex: Xicrinha" 
                        ClearButtonVisibility="WhileEditing" />
             </Border>
 

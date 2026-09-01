@@ -57,7 +57,7 @@
 
             <!-- SEÇÃO FICHA TÉCNICA / COMPOSIÇÃO -->
             <Border StrokeShape="RoundRectangle 10" 
-                    BackgroundColor="White" 
+                    BackgroundColor="#E0E0E0" 
                     Padding="15" 
                     Margin="0,10,0,0">
                 <VerticalStackLayout Spacing="10">
@@ -75,6 +75,7 @@
                         <!-- Picker de produtos insumos -->
                         <Picker Grid.Column="0"
                                 Title="Selecione o Insumo"
+                                TextColor="#E0E0E0"
                                 ItemsSource="{Binding InsumosDisponiveis}"
                                 ItemDisplayBinding="{Binding Nome}"
                                 SelectedItem="{Binding InsumoSelecionado}"

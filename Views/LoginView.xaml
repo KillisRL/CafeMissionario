@@ -15,6 +15,7 @@
                 
                 <Entry Text="{Binding Nome}"
                        Placeholder="Nome de Usuário"
+                       TextColor="#E0E0E0"
                        BackgroundColor="Transparent"
                        HeightRequest="50"
                        Keyboard="Text"/>
@@ -28,11 +29,12 @@
                     Padding="15,2">
                 
                 <Entry Text="{Binding Senha}"
-                   Placeholder="Sua Senha"
-                   BackgroundColor="Transparent"
-                   IsPassword="True"
-                   HeightRequest="50"
-                   Keyboard="Text"/>
+                       TextColor="#E0E0E0"
+                       Placeholder="Sua Senha"
+                       BackgroundColor="Transparent"
+                       IsPassword="True"
+                       HeightRequest="50"
+                       Keyboard="Text"/>
             </Border>
 
             <!-- Botão de Entrar -->
