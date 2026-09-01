@@ -9,11 +9,10 @@
         <SearchBar Grid.Row="0"
                        Text="{Binding TextoBusca}"
                        Placeholder="Buscar produto (ex: Capuccino)"
-                       BackgroundColor="White"
+                       BackgroundColor="#E0E0E0"
                        TextColor="#7B2332"
                        CancelButtonColor="#7B2332"
-                       SearchIconColor="#7B2332"
-                       SearchCommand="{Binding ConsultarProdutosCommand}"/>
+                       SearchIconColor="#7B2332"/>
 
         <!-- Lista dos Produtos Cadastrados -->
         <CollectionView Grid.Row="1" ItemsSource="{Binding ListaProdutos}">

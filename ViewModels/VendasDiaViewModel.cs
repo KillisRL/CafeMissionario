@@ -139,20 +139,23 @@ namespace CafeMissionario.ViewModels
                 sb.AppendLine($"QTD DE VENDAS: {VendasHoje.Count} vendas");
                 sb.AppendLine($"TOTAL DE ITENS: {TotalItensVendidos} unidades");
                 sb.AppendLine("-----------------------------------");
+
+                // --- SEÇÃO DE PRODUTOS NA ORDEM CERTA ---
                 sb.AppendLine("        RESUMO DE PRODUTOS         ");
                 sb.AppendLine("-----------------------------------");
+                foreach (var item in ResumoProdutos)
+                {
+                    sb.AppendLine($"{item.Quantidade}x {item.NomeProduto}");
+                }
+
                 sb.AppendLine("-----------------------------------");
+
+                // --- SEÇÃO DE PAGAMENTOS NA ORDEM CERTA ---
                 sb.AppendLine("       VENDAS POR PAGAMENTO        ");
                 sb.AppendLine("-----------------------------------");
                 foreach (var pag in ResumoPagamentos)
                 {
                     sb.AppendLine($"{pag.FormaPagamento}: R$ {pag.Total:F2}");
-                }
-
-                foreach (var item in ResumoProdutos)
-                {
-                    // Formata bonitinho: Ex: "15x Pão Francês"
-                    sb.AppendLine($"{item.Quantidade}x {item.NomeProduto}");
                 }
 
                 sb.AppendLine("===================================");

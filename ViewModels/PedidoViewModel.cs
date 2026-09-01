@@ -27,13 +27,14 @@ namespace CafeMissionario.ViewModels
     {
         // Propriedades
         [ObservableProperty] private ObservableCollection<ItemCardapio> _listaProdutos = new();
+        [ObservableProperty] private ObservableCollection<ItemCardapio> _listaProdutosFiltrada = new();
+        [ObservableProperty] private string _textoBusca = string.Empty;
         [ObservableProperty] private decimal _valorTotal;
         [ObservableProperty] private string _nomeCliente = string.Empty;
         [ObservableProperty] private string _formaPagamento = string.Empty;
         [ObservableProperty] private string _vendedor = string.Empty;
         [ObservableProperty] private int _id;
         [ObservableProperty] private Pedido _vendaParaEditar;
-
 
         public List<string> FormasPagamentoOpcoes { get; } = new()
         {
@@ -52,6 +53,30 @@ namespace CafeMissionario.ViewModels
 
         #region Metodos
         // Métodos
+        partial void OnTextoBuscaChanged(string value)
+        {
+            FiltrarProdutos();
+        }
+
+        private void FiltrarProdutos()
+        {
+            // Se a barra de pesquisa estiver vazia...
+            if (string.IsNullOrWhiteSpace(TextoBusca))
+            {
+                // ...a lista filtrada recebe todos os produtos da lista mestre.
+                ListaProdutosFiltrada = new ObservableCollection<ItemCardapio>(ListaProdutos);
+            }
+            else
+            {
+                // Caso contrário, filtra pelo nome (ignorando maiúsculas/minúsculas)
+                var filtrados = ListaProdutos
+                    .Where(p => p.Nome.ToLower().Contains(TextoBusca.ToLower()))
+                    .ToList();
+
+                // Atualiza a lista de exibição apenas com os itens que deram match na busca
+                ListaProdutosFiltrada = new ObservableCollection<ItemCardapio>(filtrados);
+            }
+        }
 
         #region CarregarCardapio
         public void CarregarCardapio()
@@ -121,6 +146,7 @@ namespace CafeMissionario.ViewModels
                     });
                 }
             }
+            FiltrarProdutos();
         }
         #endregion
 
@@ -337,6 +363,19 @@ namespace CafeMissionario.ViewModels
 
 
         // Comandos
+
+        [RelayCommand]
+        private async Task ConsultarProdutos()
+        {
+            using var db = new AppDbContext();
+
+            var lista = string.IsNullOrWhiteSpace(TextoBusca)
+                ? ListaProdutos
+                : ListaProdutos.Where(l => l.Nome.ToLower().Contains(TextoBusca.ToLower()));
+
+            ListaProdutos = new ObservableCollection<ItemCardapio>(lista);
+        }
+
         [RelayCommand]
         private async Task Adicionar(ItemCardapio item)
         {

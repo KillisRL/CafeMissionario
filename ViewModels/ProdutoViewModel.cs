@@ -9,42 +9,25 @@ namespace CafeMissionario.ViewModels
     public partial class ProdutoViewModel : BaseViewModel
     {
         // Propriedades
-        [ObservableProperty]
-        private ObservableCollection<Produto> _listaProdutos = new();
+        [ObservableProperty] private ObservableCollection<Produto> _listaProdutos = new();  
 
-        [ObservableProperty]
-        private string _textoBusca = string.Empty;
+        [ObservableProperty] public string _textoBusca = string.Empty;
 
-        [ObservableProperty]
-        private string _nome = string.Empty;
+        [ObservableProperty] private string _nome = string.Empty;
 
-        [ObservableProperty]
-        private decimal _preco;
+        [ObservableProperty] private decimal _preco;
 
-        [ObservableProperty]
-        private int _quantidadeEstoque;
+        [ObservableProperty] private int _quantidadeEstoque;
 
-        [ObservableProperty]
-        private bool _controlaEstoque = true;
+        [ObservableProperty] private bool _controlaEstoque = true;
 
         // Construtor
         public ProdutoViewModel()
         {
+            ConsultarProdutos();
         }
 
         // Comandos
-        [RelayCommand]
-        private async Task ConsultarProdutos()
-        {
-            using var db = new AppDbContext();
-
-            var lista = string.IsNullOrWhiteSpace(TextoBusca)
-                ? db.Produtos.ToList()
-                : db.Produtos.Where(p => p.Nome.ToLower().Contains(TextoBusca.ToLower())).ToList();
-
-            ListaProdutos = new ObservableCollection<Produto>(lista);
-        }
-
         [RelayCommand]
         private async Task ExcluirProduto(Produto produto)
         {          
@@ -78,7 +61,7 @@ namespace CafeMissionario.ViewModels
                     db.Produtos.Remove(produtoParaApagar);
                     await db.SaveChangesAsync();
                 
-                    await ConsultarProdutos();
+                    ConsultarProdutos();
                 }
             }
         }
@@ -95,6 +78,22 @@ namespace CafeMissionario.ViewModels
 
             // Navega para a tela de cadastro enviando o objeto selecionado
             await Shell.Current.GoToAsync("ProdutoCadView", parametros);
+        }
+
+        // Métodos
+        partial void OnTextoBuscaChanged(string? oldValue, string newValue)
+        {
+            ConsultarProdutos();
+        }
+        public void ConsultarProdutos()
+        {
+            using var db = new AppDbContext();
+
+            var lista = string.IsNullOrWhiteSpace(TextoBusca)
+                ? db.Produtos.ToList()
+                : db.Produtos.Where(p => p.Nome.ToLower().Contains(TextoBusca.ToLower())).ToList();
+
+            ListaProdutos = new ObservableCollection<Produto>(lista);
         }
     }
 }

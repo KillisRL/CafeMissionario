@@ -23,11 +23,12 @@
                     <VerticalStackLayout Grid.Column="0">
 
                         <Label Text="Total Vendido Hoje"
-                               TextColor="#D1D1D6" 
+                               TextColor="#E0E0E0"
+                               FontAttributes="Bold"
                                FontSize="12"/>
 
                         <Label Text="{Binding TotalAcumuladoHoje, StringFormat='R$ {0:F2}'}" 
-                               TextColor="White"
+                               TextColor="#E0E0E0"
                                FontAttributes="Bold"
                                FontSize="22"/>
 
@@ -147,7 +148,7 @@
                                            FontSize="12"/>
 
                                     <Label Text="•"
-                                           TextColor="#C7C7CC"
+                                           TextColor="#E0E0E0"
                                            FontSize="12"/>
 
                                     <Label Text="{Binding FormaPagamento}"
@@ -167,7 +168,8 @@
 
                 <CollectionView.EmptyView>
                     <Label Text="Nenhuma venda realizada hoje."
-                           TextColor="White"
+                           TextColor="#E0E0E0"
+                           FontAttributes="Bold"
                            HorizontalOptions="Center"
                            Margin="0,30"/>
                 </CollectionView.EmptyView>

@@ -17,6 +17,6 @@ public partial class ProdutoView : ContentPage
 	protected override async void OnAppearing()
 	{
 		base.OnAppearing();
-        await _viewModel.ConsultarProdutosCommand.ExecuteAsync(null);
+		_viewModel.ConsultarProdutos();
     }
 }
