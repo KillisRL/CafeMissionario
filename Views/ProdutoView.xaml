@@ -58,7 +58,6 @@
 
                             <!-- Lado Direito: Botão de Apagar -->
                             <HorizontalStackLayout Grid.Column="1" VerticalOptions="Center">
-                                <!-- Coloquei um botão de texto caso a imagem lixeirarecompensa.png dê problema -->
                                 <ImageButton Source="lixeirarecompensa.png" 
                                              HeightRequest="30" 
                                              WidthRequest="30"

@@ -113,8 +113,8 @@
                                 Padding="12"
                                 Margin="0,0,0,10">
 
-                            <Grid ColumnDefinitions="*, Auto"
-                                  RowDefinitions="Auto, Auto"
+                            <Grid ColumnDefinitions="*, *, *"
+                                  RowDefinitions="Auto, Auto, Auto"
                                   RowSpacing="4">
 
                                 <HorizontalStackLayout Grid.Column="0"
@@ -125,21 +125,20 @@
                                            FontAttributes="Bold"
                                            TextColor="#1C1C1E"/>
 
-                                    <Label Text="{Binding HoraFormatada, StringFormat='({0})'}"
+                                    <Label Text="{Binding Total, StringFormat='R$ {0:F2}'}" 
+                                       FontAttributes="Bold"
+                                       TextColor="#7B2332"/>
+
+                                </HorizontalStackLayout>
+
+                                <Label Text="{Binding HoraFormatada, StringFormat='({0})'}"
+                                       Grid.Row="1"
                                            TextColor="#8E8E93"
                                            FontSize="12"
                                            VerticalOptions="Center"/>
 
-                                </HorizontalStackLayout>
-
-                                <Label Grid.Column="1"
-                                       Grid.Row="0"
-                                       Text="{Binding Total, StringFormat='R$ {0:F2}'}" 
-                                       FontAttributes="Bold"
-                                       TextColor="#7B2332"/>
-
                                 <HorizontalStackLayout Grid.Column="0"
-                                                       Grid.Row="1"
+                                                       Grid.Row="2"
                                                        Grid.ColumnSpan="2"
                                                        Spacing="8">
 
@@ -155,6 +154,16 @@
                                            TextColor="#6E6E73"
                                            FontSize="12"/>
 
+                                </HorizontalStackLayout>
+                                <!-- Lado Direito: Botão de Apagar -->
+                                <HorizontalStackLayout Grid.Column="2"
+                                                       VerticalOptions="Center">
+                                    <ImageButton Source="lixeirarecompensa.png" 
+                                             HeightRequest="30" 
+                                             WidthRequest="30"
+                                             Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}},
+                                                Path=BindingContext.CancelarVendaCommand}"
+                                             CommandParameter="{Binding .}"/>
                                 </HorizontalStackLayout>
                             </Grid>
                             <Border.GestureRecognizers>

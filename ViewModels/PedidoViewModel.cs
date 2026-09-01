@@ -30,11 +30,15 @@ namespace CafeMissionario.ViewModels
         [ObservableProperty] private ObservableCollection<ItemCardapio> _listaProdutosFiltrada = new();
         [ObservableProperty] private string _textoBusca = string.Empty;
         [ObservableProperty] private decimal _valorTotal;
+        [ObservableProperty] private decimal _valorRecebido;
+        [ObservableProperty] private decimal _valorTroco;
+        [ObservableProperty] private bool _isDinheiro = false;
         [ObservableProperty] private string _nomeCliente = string.Empty;
         [ObservableProperty] private string _formaPagamento = string.Empty;
         [ObservableProperty] private string _vendedor = string.Empty;
         [ObservableProperty] private int _id;
         [ObservableProperty] private Pedido _vendaParaEditar;
+        [ObservableProperty] private bool _exibirAvisoVazio = false;
 
         public List<string> FormasPagamentoOpcoes { get; } = new()
         {
@@ -60,23 +64,24 @@ namespace CafeMissionario.ViewModels
 
         private void FiltrarProdutos()
         {
-            // Se a barra de pesquisa estiver vazia...
             if (string.IsNullOrWhiteSpace(TextoBusca))
             {
-                // ...a lista filtrada recebe todos os produtos da lista mestre.
                 ListaProdutosFiltrada = new ObservableCollection<ItemCardapio>(ListaProdutos);
+                ExibirAvisoVazio = false; // Tem produtos, então esconde o aviso
             }
             else
             {
-                // Caso contrário, filtra pelo nome (ignorando maiúsculas/minúsculas)
                 var filtrados = ListaProdutos
                     .Where(p => p.Nome.ToLower().Contains(TextoBusca.ToLower()))
                     .ToList();
 
-                // Atualiza a lista de exibição apenas com os itens que deram match na busca
                 ListaProdutosFiltrada = new ObservableCollection<ItemCardapio>(filtrados);
+
+                // Se a lista filtrada ficou vazia, liga o aviso! Senão, desliga.
+                ExibirAvisoVazio = !ListaProdutosFiltrada.Any();
             }
         }
+        
 
         #region CarregarCardapio
         public void CarregarCardapio()
@@ -154,6 +159,30 @@ namespace CafeMissionario.ViewModels
         {
             // Soma a (Quantidade * Preço) de todos os itens da lista
             ValorTotal = ListaProdutos.Sum(i => i.QuantidadeSelecionada * i.ProdutoBase.Preco);
+
+            // Liga se for dinheiro, desliga se for qualquer outra coisa
+            IsDinheiro = FormaPagamento == "Dinheiro";
+
+            if (IsDinheiro)
+            {
+                // Só calcula o troco se o valor digitado for maior que o total
+                ValorTroco = ValorRecebido > ValorTotal ? ValorRecebido - ValorTotal : 0;
+            }
+            else
+            {
+                // Se não for dinheiro, zera tudo para não dar confusão no próximo pedido
+                ValorRecebido = 0;
+                ValorTroco = 0;
+            }
+        }
+
+        partial void OnFormaPagamentoChanged(string? oldValue, string newValue)
+        {
+            CalcularTotal();
+        }
+        partial void OnValorRecebidoChanged(decimal oldValue, decimal newValue)
+        {
+            CalcularTotal();
         }
 
         #region ValidarEstoqueCarrinho
@@ -363,17 +392,26 @@ namespace CafeMissionario.ViewModels
 
 
         // Comandos
+        [RelayCommand]
+        private void LimparPedido()
+        {
+            foreach (var item in ListaProdutos)
+            {
+                item.QuantidadeSelecionada = 0;
+            }
+
+            NomeCliente = string.Empty;
+            FormaPagamento = string.Empty;
+            ValorRecebido = 0;
+
+            CalcularTotal();
+        }
 
         [RelayCommand]
         private async Task ConsultarProdutos()
         {
-            using var db = new AppDbContext();
-
-            var lista = string.IsNullOrWhiteSpace(TextoBusca)
-                ? ListaProdutos
-                : ListaProdutos.Where(l => l.Nome.ToLower().Contains(TextoBusca.ToLower()));
-
-            ListaProdutos = new ObservableCollection<ItemCardapio>(lista);
+            FiltrarProdutos();
+            await Task.CompletedTask;
         }
 
         [RelayCommand]

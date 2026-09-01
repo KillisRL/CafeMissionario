@@ -7,95 +7,110 @@
 
     <Grid RowDefinitions="Auto, *, Auto, Auto">
 
-        <SearchBar Grid.Row="0"
+        <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
+            <SearchBar Grid.Column="0"
                    Text="{Binding TextoBusca}"
                    Placeholder="Buscar produto (ex: Pão de Queijo)"
                    BackgroundColor="#E0E0E0"
                    TextColor="#7B2332"
                    SearchIconColor="#7B2332"
                    CancelButtonColor="#7B2332">
-            
-        </SearchBar>
 
-        <!-- Lista de Produtos -->
-        <CollectionView Grid.Row="1" 
-                        ItemsSource="{Binding ListaProdutosFiltrada}" 
-                        Margin="15,10,15,5">
-            
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <Border StrokeShape="RoundRectangle 12"
-                            Stroke="#E0E0E0"
-                            BackgroundColor="#E0E0E0"
-                            Padding="15,12"
-                            Margin="0,0,0,10">
-                        <Grid ColumnDefinitions="*, Auto">
+            </SearchBar>
+            <ImageButton Source="limpar.png"
+                         Grid.Column="1"
+                         Command="{Binding LimparPedidoCommand}"
+                         HeightRequest="50"
+                         WidthRequest="50"/>
+        </Grid>
 
-                            <!-- Nome e Preço -->
-                            <VerticalStackLayout Grid.Column="0" VerticalOptions="Center" Spacing="2">
-                                <Label Text="{Binding ProdutoBase.Nome}"
-                                       FontAttributes="Bold"
-                                       FontSize="16"
-                                       TextColor="#1C1C1E" />
-                                <Label Text="{Binding ProdutoBase.Preco, StringFormat='R$ {0:F2}'}"
-                                       TextColor="#6E6E73"
-                                       FontSize="14" />
-                                <Label Text="{Binding ProdutoBase.QuantidadeEstoque, StringFormat='Estoque: {0:F1} un'}"
-                                       TextColor="#7B2332"
-                                       FontAttributes="Bold"
-                                       IsVisible="{Binding ProdutoBase.ControlaEstoque}"
-                                       FontSize="14"/>
-                                <Label Text="{Binding Insumo, StringFormat='Este Produto Não Controla Estoque (Insumo: {0})'}"
-                                       TextColor="#7B2332"
-                                       FontAttributes="Bold"
-                                       IsVisible="{Binding ExibirInsumo}"
-                                       FontSize="14"/>
-                                <Label Text="Este Produto Não Controla Estoque"
-                                       TextColor="#7B2332"
-                                       FontAttributes="Bold"
-                                       IsVisible="{Binding ExibirMsg}"
-                                       FontSize="14"/>
-                            </VerticalStackLayout>
 
-                            <!-- Botões de Adicionar / Remover -->
-                            <HorizontalStackLayout Grid.Column="1" Spacing="8" VerticalOptions="Center">
-                                <Button Text="-" 
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:PedidoViewModel}}, Path=RemoverCommand}"
-                                        CommandParameter="{Binding .}"
-                                        BackgroundColor="#E5E5EA"
-                                        TextColor="#7B2332"
-                                        FontAttributes="Bold"
-                                        FontSize="18"
-                                        CornerRadius="8"
-                                        WidthRequest="36"
-                                        HeightRequest="36"
-                                        Padding="0" />
+        <!-- Lista de Produtos e Feedback de Busca Vazia -->
+        <Grid Grid.Row="1" Margin="15,10,15,5">
+            <CollectionView ItemsSource="{Binding ListaProdutosFiltrada}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border StrokeShape="RoundRectangle 12"
+                                Stroke="#E0E0E0"
+                                BackgroundColor="#E0E0E0"
+                                Padding="15,12"
+                                Margin="0,0,0,10">
+                            <Grid ColumnDefinitions="*, Auto">
+                                <!-- Nome e Preço -->
+                                <VerticalStackLayout Grid.Column="0" VerticalOptions="Center" Spacing="2">
+                                    <Label Text="{Binding ProdutoBase.Nome}"
+                                           FontAttributes="Bold"
+                                           FontSize="16"
+                                           TextColor="#1C1C1E" />
+                                    <Label Text="{Binding ProdutoBase.Preco, StringFormat='R$ {0:F2}'}"
+                                           TextColor="#6E6E73"
+                                           FontSize="14" />
+                                    <Label Text="{Binding ProdutoBase.QuantidadeEstoque, StringFormat='Estoque: {0:F1} un'}"
+                                           TextColor="#7B2332"
+                                           FontAttributes="Bold"
+                                           IsVisible="{Binding ProdutoBase.ControlaEstoque}"
+                                           FontSize="14"/>
+                                    <Label Text="{Binding Insumo, StringFormat='Este Produto Não Controla Estoque (Insumo: {0})'}"
+                                           TextColor="#7B2332"
+                                           FontAttributes="Bold"
+                                           IsVisible="{Binding ExibirInsumo}"
+                                           FontSize="14"/>
+                                    <Label Text="Este Produto Não Controla Estoque"
+                                           TextColor="#7B2332"
+                                           FontAttributes="Bold"
+                                           IsVisible="{Binding ExibirMsg}"
+                                           FontSize="14"/>
+                                </VerticalStackLayout>
 
-                                <Label Text="{Binding QuantidadeSelecionada}" 
-                                       VerticalOptions="Center" 
-                                       HorizontalTextAlignment="Center"
-                                       FontSize="16" 
-                                       FontAttributes="Bold"
-                                       TextColor="#1C1C1E"
-                                       WidthRequest="28" />
+                                <!-- Botões de Adicionar / Remover -->
+                                <HorizontalStackLayout Grid.Column="1" Spacing="8" VerticalOptions="Center">
+                                    <Button Text="-" 
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:PedidoViewModel}}, Path=RemoverCommand}"
+                                            CommandParameter="{Binding .}"
+                                            BackgroundColor="#E5E5EA"
+                                            TextColor="#7B2332"
+                                            FontAttributes="Bold"
+                                            FontSize="18"
+                                            CornerRadius="8"
+                                            WidthRequest="36"
+                                            HeightRequest="36"
+                                            Padding="0" />
 
-                                <Button Text="+" 
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:PedidoViewModel}}, Path=AdicionarCommand}"
-                                        CommandParameter="{Binding .}"
-                                        BackgroundColor="#7B2332"
-                                        TextColor="White"
-                                        FontAttributes="Bold"
-                                        FontSize="18"
-                                        CornerRadius="8"
-                                        WidthRequest="36"
-                                        HeightRequest="36"
-                                        Padding="0" />
-                            </HorizontalStackLayout>
-                        </Grid>
-                    </Border>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
+                                    <Label Text="{Binding QuantidadeSelecionada}" 
+                                           VerticalOptions="Center" 
+                                           HorizontalTextAlignment="Center"
+                                           FontSize="16" 
+                                           FontAttributes="Bold"
+                                           TextColor="#1C1C1E"
+                                           WidthRequest="28" />
+
+                                    <Button Text="+" 
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:PedidoViewModel}}, Path=AdicionarCommand}"
+                                            CommandParameter="{Binding .}"
+                                            BackgroundColor="#7B2332"
+                                            TextColor="White"
+                                            FontAttributes="Bold"
+                                            FontSize="18"
+                                            CornerRadius="8"
+                                            WidthRequest="36"
+                                            HeightRequest="36"
+                                            Padding="0" />
+                                </HorizontalStackLayout>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <!-- Feedback Visual de Busca Vazia -->
+            <Label Text="Nenhum produto encontrado"
+               TextColor="#F2E3D5"
+               FontSize="18"
+               FontAttributes="Bold"
+               HorizontalOptions="Center"
+               VerticalOptions="Center"
+               IsVisible="{Binding ExibirAvisoVazio}" />
+        </Grid>
 
         <!-- Informações do Cliente -->
         <VerticalStackLayout Grid.Row="2" Padding="15,5,15,10" Spacing="10">
@@ -129,18 +144,49 @@
                 StrokeThickness="0"
                 Padding="20,15">
             <VerticalStackLayout Spacing="12">
-                <Grid ColumnDefinitions="*, Auto">
+                <Grid ColumnDefinitions="*, Auto, Auto, Auto"
+                      ColumnSpacing="20">
                     <Label Grid.Column="0" 
-                           Text="Total do Pedido" 
+                           Text="Valores do Pedido" 
                            FontSize="15" 
                            TextColor="#6E6E73" 
                            VerticalOptions="Center" />
 
                     <Label Grid.Column="1" 
-                           Text="{Binding ValorTotal, StringFormat='R$ {0:F2}'}" 
+                           Text="{Binding ValorTotal, StringFormat='Valor Total: R$ {0:F2}'}" 
                            FontSize="22" 
                            FontAttributes="Bold" 
                            TextColor="#7B2332" />
+
+
+                    <HorizontalStackLayout Grid.Column="2"
+                                           VerticalOptions="Center"
+                                           Spacing="5">
+                        
+                        <Label Text="Valor Recebido: R$ " 
+                               FontSize="22" 
+                               VerticalOptions="Center"
+                               IsVisible="{Binding IsDinheiro}"
+                               FontAttributes="Bold" 
+                               TextColor="DarkGreen" />
+
+                        <Entry Text="{Binding ValorRecebido}"
+                               IsVisible="{Binding IsDinheiro}"
+                               Keyboard="Numeric"
+                               VerticalOptions="Center"
+                               HorizontalTextAlignment="Center"
+                               FontSize="22"
+                               FontAttributes="Bold"
+                               TextColor="DarkGreen"
+                               WidthRequest="100" />
+                    </HorizontalStackLayout>
+
+                    <Label Grid.Column="3" 
+                           Text="{Binding ValorTroco, StringFormat='Troco devido: R$ {0:F2}'}"
+                           IsVisible="{Binding IsDinheiro}"
+                           FontSize="22" 
+                           FontAttributes="Bold" 
+                           TextColor="Red" />
                 </Grid>
 
                 <Grid ColumnDefinitions="*,*" ColumnSpacing="20">
@@ -157,7 +203,7 @@
                             FontSize="16"
                             CornerRadius="10"
                             HeightRequest="48" />
-                    
+
                     <!-- Botão Finalizar e Copiar -->
                     <Button Text="Finalizar e Copiar"
                             Grid.Column="1"
@@ -168,8 +214,9 @@
                             FontSize="16"
                             CornerRadius="10"
                             HeightRequest="48" />
+                    
                 </Grid>
-               
+
             </VerticalStackLayout>
         </Border>
 

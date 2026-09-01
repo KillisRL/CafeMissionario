@@ -181,29 +181,39 @@ namespace CafeMissionario.ViewModels
         }
         #endregion
 
-        //[RelayCommand]
-        //public async Task CancelarVenda(Pedido pedido)
-        //{
-        //    if (pedido == null) return;
+        [RelayCommand]
+        public async Task CancelarVenda(PedidoDiaItem pedido)
+        {
+            using var db = new AppDbContext();
 
-        //    // Pergunta de segurança antes de apagar
-        //    bool confirmar = await Shell.Current.DisplayAlertAsync(
-        //        "Confirmação",
-        //        $"Deseja realmente excluir o pedido de '{pedido.NomeCliente}'?",
-        //        "Sim",
-        //        "Não");
+            if (pedido == null) return;
 
-        //    if (confirmar)
-        //    {
-        //        using var db = new AppDbContext();
-        //        db.Pedidos.Remove(pedido);
-        //        await db.SaveChangesAsync();
+            // Pergunta de segurança antes de apagar
+            bool confirmar = await Shell.Current.DisplayAlertAsync(
+                "Confirmação",
+                $"Deseja realmente excluir o pedido de '{pedido.Cliente}'?",
+                "Sim",
+                "Não");
 
-        //        // Recarrega a lista para o item sumir da tela
-        //        CarregarVendasHoje();
-        //    }
+            if (confirmar)
+            {
+                var pedidoSalvo = db.Pedidos.Find(pedido.Id);
 
-        //}
+                // Estornar Estoque           
+                if (pedidoSalvo != null)
+                {
+                    var itensAntigos =
+                    db.ItensPedido.Where(i => i.PedidoId == pedidoSalvo.Id).ToList();
+
+                    await EstornarEstoquePedido(itensAntigos);
+
+                    db.ItensPedido.RemoveRange(itensAntigos);
+
+                    db.Pedidos.Remove(pedidoSalvo);
+                }                         
+                CarregarVendasHoje();
+            }
+        }
 
         [RelayCommand]
         private async Task EditarVenda(PedidoDiaItem pedido)
@@ -220,6 +230,47 @@ namespace CafeMissionario.ViewModels
 
             // Navega para a tela de cadastro enviando o objeto selecionado
             await Shell.Current.GoToAsync("PedidoView", parametros);
+        }
+
+        // Métodos
+        public async Task EstornarEstoquePedido(List<PedidoItem> itensVendidos)
+        {
+            using var db = new AppDbContext();
+
+            foreach (var item in itensVendidos)
+            {
+                // Busca a receita (Ficha Técnica) deste item
+                var receita = db.FichasTecnicas
+                                .Where(f => f.ProdutoId == item.ProdutoId)
+                                .ToList();
+
+                if (receita.Any())
+                {
+                    // Se tem ficha técnica, desconta do insumo base (Ex: Pão Francês)
+                    foreach (var ingrediente in receita)
+                    {
+                        var insumoNoBanco = db.Produtos.Find(ingrediente.InsumoId);
+                        if (insumoNoBanco != null && insumoNoBanco.ControlaEstoque)
+                        {
+                            decimal totalAbater = ingrediente.QuantidadeConsumida * item.Quantidade;
+                            insumoNoBanco.QuantidadeEstoque += totalAbater;
+                            db.Produtos.Update(insumoNoBanco);
+                        }
+                    }
+                }
+                else
+                {
+                    // Se não tem ficha técnica, desconta do próprio produto se ele controlar estoque
+                    var produtoNoBanco = db.Produtos.Find(item.ProdutoId);
+                    if (produtoNoBanco != null && produtoNoBanco.ControlaEstoque)
+                    {
+                        produtoNoBanco.QuantidadeEstoque += item.Quantidade;
+                        db.Produtos.Update(produtoNoBanco);
+                    }
+                }
+            }
+
+            await db.SaveChangesAsync();
         }
     }
 }
