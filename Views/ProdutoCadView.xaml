@@ -47,7 +47,9 @@
             <!-- O Campo de Quantidade (Some e aparece dinamicamente!) -->
             <VerticalStackLayout IsVisible="{Binding ControlaEstoque}" Spacing="5">
                 
-                <Label Text="Quantidade Inicial:" />
+                <Label Text="Quantidade Inicial:"
+                      TextColor:"#E0E0E0"
+                      FontAttributes="Bold"/>
                 <Entry Text="{Binding Quantidade}" 
                        Placeholder="Ex: 10" 
                        Keyboard="Numeric" 
