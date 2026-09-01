@@ -2,26 +2,35 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="CafeMissionario.Views.ProdutoCadView"
-             BackgroundColor="#7b2332">
+             BackgroundColor="#7B2332">
     <ScrollView>
         <VerticalStackLayout Spacing="15"
                              Padding="30"
                              MaximumWidthRequest="500"
                              HorizontalOptions="Center">
 
-            <Label Text="Novo Produto"
+            <Label Text="Cadastrar/Atualizar Produto"
                    FontSize="24"
+                   TextColor="#E0E0E0"
                    FontAttributes="Bold"
                    HorizontalOptions="Center"
                    Margin="0,0,0,20"/>
 
-            <Label Text="Nome do Produto:" />
-            <Entry Text="{Binding Nome}" 
+            <Label Text="Nome do Produto:"
+                   TextColor="#E0E0E0"
+                   FontAttributes="Bold"/>
+            <Entry Text="{Binding Nome}"
+                   TextColor="#E0E0E0"
+                   FontAttributes="Bold"
                    Placeholder="Ex: Bolo de Cenoura" 
                    ClearButtonVisibility="WhileEditing" />
 
-            <Label Text="Preço (R$):" />
-            <Entry Text="{Binding Preco}" 
+            <Label Text="Preço (R$):"
+                   TextColor="#E0E0E0"
+                   FontAttributes="Bold"/>
+            <Entry Text="{Binding Preco}"
+                   TextColor="#E0E0E0"
+                   FontAttributes="Bold"
                    Placeholder="Ex: 5,00" 
                    Keyboard="Numeric" 
                    ClearButtonVisibility="WhileEditing" />
@@ -30,7 +39,9 @@
             <HorizontalStackLayout Spacing="10" Margin="0,10,0,10" VerticalOptions="Center">
                 <Switch IsToggled="{Binding ControlaEstoque}" />
                 <Label Text="Controlar Estoque desse produto?"
-                       VerticalOptions="Center" />
+                       VerticalOptions="Center"
+                       TextColor="#E0E0E0"
+                       FontAttributes="Bold"/>
             </HorizontalStackLayout>
 
             <!-- O Campo de Quantidade (Some e aparece dinamicamente!) -->
@@ -124,15 +135,34 @@
                 </VerticalStackLayout>
             </Border>
 
-            <!-- Botão Salvar Produto -->
-            <Button Text="Salvar Produto" 
+            
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="15">
+                <!-- Botão Salvar Produto -->
+                <Button Text="Cancelar"
+                        Grid.Column="0"
+                        Command="{Binding AbrirTelaCommand}"
+                        CommandParameter="PrincipalView"
+                        Margin="0,20,0,0"
+                        BackgroundColor="Transparent"
+                        TextColor="#E0E0E0"
+                        FontAttributes="Bold"
+                        BorderColor="#E0E0E0"
+                        BorderWidth="3"
+                        CornerRadius="8"
+                        HeightRequest="50"/>
+                
+                <!-- Botão Salvar Produto -->
+                <Button Text="Salvar Produto" 
                     Command="{Binding SalvarProdutoCommand}" 
+                    Grid.Column="1"
                     Margin="0,20,0,0"
-                    BackgroundColor="#2196F3"
-                    TextColor="White"
+                    BackgroundColor="#E0E0E0"
+                    TextColor="#7B2332"
                     FontAttributes="Bold"
                     CornerRadius="8"
                     HeightRequest="50"/>
+            </Grid>
+            
 
         </VerticalStackLayout>
     </ScrollView>

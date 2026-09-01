@@ -47,10 +47,22 @@ namespace CafeMissionario.ViewModels
 
         [RelayCommand]
         private async Task ExcluirProduto(Produto produto)
-        {
+        {          
             if (produto == null) return;
 
-            // Pergunta de segurança antes de apagar
+            using var db = new AppDbContext();
+            bool temVendas = db.ItensPedido.Any(v => v.ProdutoId == produto.Id);
+
+            if (temVendas)
+            {
+                await Shell.Current.DisplayAlertAsync(
+                    "Atenção",
+                    $"Não é possível excluir '{produto.Nome}' pois já existem vendas registradas com ele.",
+                    "OK");
+                return;
+            }
+
+            // Pergunta de segurança antes de excluir
             bool confirmar = await Shell.Current.DisplayAlertAsync(
                 "Confirmação",
                 $"Deseja realmente excluir '{produto.Nome}'?",
@@ -59,12 +71,15 @@ namespace CafeMissionario.ViewModels
 
             if (confirmar)
             {
-                using var db = new AppDbContext();
-                db.Produtos.Remove(produto);
-                await db.SaveChangesAsync();
+                var produtoParaApagar = db.Produtos.Find(produto.Id);
 
-                // Recarrega a lista para o item sumir da tela
-                await ConsultarProdutos();
+                if (produtoParaApagar != null)
+                {
+                    db.Produtos.Remove(produtoParaApagar);
+                    await db.SaveChangesAsync();
+                
+                    await ConsultarProdutos();
+                }
             }
         }
 
