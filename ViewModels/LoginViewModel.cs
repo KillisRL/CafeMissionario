@@ -42,7 +42,7 @@ namespace CafeMissionario.ViewModels
 
             await Shell.Current.DisplayAlertAsync("Boas-vindas", $"Seja bem-vindo(a), {usuarioBanco.Nome}!", "Ok");
 
-            await Shell.Current.GoToAsync("PrincipalView");
+            await Shell.Current.GoToAsync("//PrincipalView");
         }
 
         // Construtor

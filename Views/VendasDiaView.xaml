@@ -12,6 +12,17 @@
         <VerticalStackLayout Spacing="15" 
                              Padding="20" 
                              MaximumWidthRequest="500">
+            <!-- Botão Voltar -->
+            <Button Text="Voltar"
+                        BorderColor="#7B2332"
+                        BorderWidth="5"
+                        Command="{Binding VoltarCommand}"
+                        BackgroundColor="#E0E0E0"
+                        TextColor="#7B2332"
+                        FontAttributes="Bold"
+                        FontSize="16"
+                        CornerRadius="10"
+                        HeightRequest="48" />
 
             <!-- Card Resumo Financeiro -->
             <Border StrokeShape="RoundRectangle 12" 

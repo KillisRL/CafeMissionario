@@ -43,8 +43,7 @@
 
                 <!-- Botão Secundário: Acesso Rápido (Visitante) -->
                 <Button Text="Acesso Rápido (Visitante)" 
-                    Command="{Binding AbrirTelaCommand}" 
-                    CommandParameter="PrincipalView"
+                    Command="{Binding AcessarComoVisitanteCommand}"
                     BackgroundColor="Transparent"
                     BorderColor="#F2E3D5"
                     BorderWidth="2"

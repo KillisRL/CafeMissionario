@@ -75,11 +75,10 @@
         <!-- Botões Voltar e Cadastrar -->
         <Grid Grid.Row="2" ColumnDefinitions="*, *" ColumnSpacing="15">
 
-            <!-- Botão Voltar (Coluna 0) -->
+            <!-- Botão Voltar -->
             <Button Grid.Column="0"
                     Text="Voltar"
-                    Command="{Binding AbrirTelaCommand}"
-                    CommandParameter="PrincipalView"
+                    Command="{Binding VoltarCommand}"
                     BackgroundColor="Transparent"
                     BorderColor="#F2E3D5"
                     BorderWidth="2"
@@ -87,7 +86,7 @@
                     FontAttributes="Bold"
                     CornerRadius="25"/>
 
-            <!-- Botão Cadastrar (Coluna 1) -->
+            <!-- Botão Cadastrar -->
             <Button Grid.Column="1"
                     Text="+ Cadastrar"
                     Command="{Binding AbrirTelaCommand}"

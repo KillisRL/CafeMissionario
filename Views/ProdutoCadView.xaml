@@ -48,8 +48,8 @@
             <VerticalStackLayout IsVisible="{Binding ControlaEstoque}" Spacing="5">
                 
                 <Label Text="Quantidade Inicial:"
-                      TextColor:"#E0E0E0"
-                      FontAttributes="Bold"/>
+                       TextColor="#E0E0E0"
+                       FontAttributes="Bold"/>
                 <Entry Text="{Binding Quantidade}" 
                        Placeholder="Ex: 10" 
                        Keyboard="Numeric" 
@@ -140,11 +140,10 @@
 
             
             <Grid ColumnDefinitions="*,*" ColumnSpacing="15">
-                <!-- Botão Salvar Produto -->
+                <!-- Botão Cancelar Produto -->
                 <Button Text="Cancelar"
                         Grid.Column="0"
-                        Command="{Binding AbrirTelaCommand}"
-                        CommandParameter="PrincipalView"
+                        Command="{Binding VoltarCommand}"
                         Margin="0,20,0,0"
                         BackgroundColor="Transparent"
                         TextColor="#E0E0E0"

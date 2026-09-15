@@ -446,7 +446,7 @@ namespace CafeMissionario.ViewModels
         [RelayCommand]
         private async Task SalvarPedido()
         {
-            // Criar coneão com o banco
+            // Criar conexao com o banco
             using var db = new AppDbContext();
 
             if (string.IsNullOrWhiteSpace(NomeCliente) || string.IsNullOrWhiteSpace(FormaPagamento))
@@ -461,26 +461,21 @@ namespace CafeMissionario.ViewModels
             {
                 await Shell.Current.DisplayAlertAsync("Aviso", "Selecione ao menos um item.", "OK");
                 return;
-            }                   
-
-            // Texto para copiar e colar no Whatsapp
-            string textoParaCopiar = $"*NOVO PEDIDO*\n*Cliente:* {NomeCliente}\n*Forma de Pagamento:* {FormaPagamento}\n*Itens:*\n";
-
-            foreach (var item in itensComprados)
-            {
-                textoParaCopiar += $"- {item.QuantidadeSelecionada}x {item.ProdutoBase.Nome} (R$ {item.ProdutoBase.Preco:F2})\n";
             }
 
-            textoParaCopiar += $"\n*TOTAL: R$ {ValorTotal:F2}*";
-
-            // Salvar no Banco de Dados
-            Pedido pedidoSalvo;
-
+            // Variável para guardar o número sequencial do dia
+            int numeroPedidoDiario = 0;
             var vendedor = SessaoSistema.UsuarioAtual?.Nome ?? "Visitante";
 
+            // Define o começo e o fim do dia atual (Para garantir que só conte pedidos de hoje)
+            DateTime inicioDoDia = DateTime.Today;
+            DateTime fimDoDia = inicioDoDia.AddDays(1).AddTicks(-1);
+
+            // 1º PASSO: Salvar no Banco de Dados
             if (Id > 0)
             {
-                pedidoSalvo = db.Pedidos.Find(Id);
+                // ================= EDIÇÃO DE PEDIDO =================
+                var pedidoSalvo = db.Pedidos.Find(Id);
                 if (pedidoSalvo != null)
                 {
                     pedidoSalvo.NomeCliente = NomeCliente;
@@ -489,9 +484,8 @@ namespace CafeMissionario.ViewModels
                     pedidoSalvo.Vendedor = Vendedor;
                     db.Pedidos.Update(pedidoSalvo);
 
-                    // Estornar Estoque
-                    var itensAntigos =
-                        db.ItensPedido.Where(i => i.PedidoId == this.Id).ToList();
+                    // Estornar Estoque antigo
+                    var itensAntigos = db.ItensPedido.Where(i => i.PedidoId == this.Id).ToList();
                     await EstornarEstoquePedido(itensAntigos);
 
                     db.ItensPedido.RemoveRange(itensAntigos);
@@ -506,15 +500,28 @@ namespace CafeMissionario.ViewModels
                             Preco = item.ProdutoBase.Preco,
                             ProdutoId = item.ProdutoId
                         };
-
                         db.ItensPedido.Add(pedidoItem);
                     }
                 }
-
                 await db.SaveChangesAsync();
+
+                // Na edição, achamos a posição cronológica que esse pedido ocupou hoje
+                var idsPedidosDeHoje = db.Pedidos
+                                         .Where(p => p.DataHora >= inicioDoDia && p.DataHora <= fimDoDia)
+                                         .OrderBy(p => p.DataHora)
+                                         .Select(p => p.Id)
+                                         .ToList();
+
+                // Pega a posição na lista (Index começa em 0, então somamos 1)
+                numeroPedidoDiario = idsPedidosDeHoje.IndexOf(Id) + 1;
             }
             else
             {
+                // ================= NOVO PEDIDO =================
+                // Pega a quantidade TOTAL de pedidos feitos SOMENTE HOJE e soma 1
+                int totalPedidosHoje = db.Pedidos.Count(p => p.DataHora >= inicioDoDia && p.DataHora <= fimDoDia);
+                numeroPedidoDiario = totalPedidosHoje + 1;
+
                 var pedido = new Pedido()
                 {
                     NomeCliente = this.NomeCliente,
@@ -522,7 +529,6 @@ namespace CafeMissionario.ViewModels
                     FormaPagamento = this.FormaPagamento,
                     DataHora = DateTime.Now,
                     Vendedor = vendedor
-
                 };
 
                 db.Pedidos.Add(pedido);
@@ -538,28 +544,35 @@ namespace CafeMissionario.ViewModels
                         Quantidade = item.QuantidadeSelecionada,
                         Preco = item.ProdutoBase.Preco
                     };
-
                     db.ItensPedido.Add(pedidoItem);
                 }
-
                 await db.SaveChangesAsync();
             }
 
-            // Baixar Estoque
-            await BaixarEstoqueDoPedido(itensComprados);
+            // 2º PASSO: Montar o Texto para copiar e colar no Whatsapp com o Número Diário
+            string textoParaCopiar = $"*PEDIDO Nº {numeroPedidoDiario}*\n*Cliente:* {NomeCliente}\n*Forma de Pagamento:* {FormaPagamento}\n*Itens:*\n";
 
+            foreach (var item in itensComprados)
+            {
+                textoParaCopiar += $"- {item.QuantidadeSelecionada}x {item.ProdutoBase.Nome} (R$ {item.ProdutoBase.Preco:F2})\n";
+            }
+
+            textoParaCopiar += $"\n*TOTAL: R$ {ValorTotal:F2}*";
+
+            // 3º PASSO: Baixar Estoque
+            await BaixarEstoqueDoPedido(itensComprados);
 
             // Copiar texto para área de transferência
             await Clipboard.Default.SetTextAsync(textoParaCopiar);
 
-            await Shell.Current.DisplayAlertAsync("Informação", "Pedido Salvo e copiado para a área de transferência", "Ok");
+            // Aviso final na tela
+            await Shell.Current.DisplayAlertAsync("Sucesso!", $"Pedido Nº {numeroPedidoDiario} salvo e copiado para a área de transferência.", "Ok");
 
             // Limpar a tela
             Id = 0;
             NomeCliente = string.Empty;
             FormaPagamento = string.Empty;
             CarregarCardapio();
-
             CalcularTotal();
         }
         #endregion

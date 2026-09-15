@@ -7,7 +7,6 @@
             InitializeComponent();
 
             // ROTAS DAS VIEWS
-            Routing.RegisterRoute(nameof(Views.PrincipalView), typeof(Views.PrincipalView));
             Routing.RegisterRoute(nameof(Views.LoginView), typeof(Views.LoginView));
             Routing.RegisterRoute(nameof(Views.UsuarioCadView), typeof(Views.UsuarioCadView));
             Routing.RegisterRoute(nameof(Views.PedidoView), typeof(Views.PedidoView));

@@ -13,7 +13,8 @@
                 StrokeThickness="0" 
                 Padding="15,10">
 
-                <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
+                <Grid ColumnDefinitions="*, Auto, Auto" VerticalOptions="Center"
+                      ColumnSpacing="20">
                     <VerticalStackLayout Grid.Column="0" Spacing="2">
                         <Label Text="Operador Ativo"
                        FontSize="11"
@@ -25,8 +26,18 @@
                        TextColor="White" />
                     </VerticalStackLayout>
 
+                    <Image Source="exit_icon01.png"
+                           HeightRequest="22"
+                           WidthRequest="22"
+                           Grid.Column="1">
+                        <Image.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding AbrirTelaCommand}"
+                                                  CommandParameter="//SplashScreen"/>
+                        </Image.GestureRecognizers>
+                    </Image>
+
                     <!-- Emblema com o Perfil (Admin / Colaborador) -->
-                    <Border Grid.Column="1" 
+                    <Border Grid.Column="2" 
                         StrokeShape="RoundRectangle 8" 
                         BackgroundColor="#E0E0E0" 
                         Padding="8,4" 
@@ -50,27 +61,27 @@
 
                 <!-- Carrinho/Pedidos -->
                 <Image Source="carrinho.png"
-               Grid.Column="0"
-               Grid.Row="0"
-               HorizontalOptions="Center"
-               HeightRequest="150"
-               WidthRequest="100">
+                       Grid.Column="0"
+                       Grid.Row="0"
+                       HorizontalOptions="Center"
+                       HeightRequest="150"
+                       WidthRequest="100">
                     <Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding AbrirTelaCommand}"
-                                      CommandParameter="PedidoView"/>
+                                              CommandParameter="PedidoView"/>
                     </Image.GestureRecognizers>
                 </Image>
 
                 <!-- Cardapio -->
                 <Image Source="cardapio.png"
-               Grid.Column="1"
-               Grid.Row="0"
-               HorizontalOptions="Center"
-               HeightRequest="150"
-               WidthRequest="100">
+                       Grid.Column="1"
+                       Grid.Row="0"
+                       HorizontalOptions="Center"
+                       HeightRequest="150"
+                       WidthRequest="100">
                     <Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding AbrirTelaCommand}"
-                                      CommandParameter="ProdutoView"/>
+                                              CommandParameter="ProdutoView"/>
                     </Image.GestureRecognizers>
                 </Image>
 
