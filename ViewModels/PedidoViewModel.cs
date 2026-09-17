@@ -62,22 +62,43 @@ namespace CafeMissionario.ViewModels
             FiltrarProdutos();
         }
 
+        private string RemoverAcentos(string texto)
+        {
+            if (string.IsNullOrWhiteSpace(texto))
+                return texto;
+
+            var textoNormalizado = texto.Normalize(System.Text.NormalizationForm.FormD);
+            var construtor = new System.Text.StringBuilder();
+
+            foreach (var c in textoNormalizado)
+            {
+                var categoria = CharUnicodeInfo.GetUnicodeCategory(c);
+                if (categoria != UnicodeCategory.NonSpacingMark)
+                {
+                    construtor.Append(c);
+                }
+            }
+
+            return construtor.ToString().Normalize(System.Text.NormalizationForm.FormC);
+        }
+
         private void FiltrarProdutos()
         {
             if (string.IsNullOrWhiteSpace(TextoBusca))
             {
                 ListaProdutosFiltrada = new ObservableCollection<ItemCardapio>(ListaProdutos);
-                ExibirAvisoVazio = false; // Tem produtos, então esconde o aviso
+                ExibirAvisoVazio = false;
             }
             else
             {
+                string buscaNormalizada = RemoverAcentos(TextoBusca).ToLower();
+
                 var filtrados = ListaProdutos
-                    .Where(p => p.Nome.ToLower().Contains(TextoBusca.ToLower()))
+                    .Where(p => RemoverAcentos(p.Nome).ToLower().Contains(buscaNormalizada))
                     .ToList();
 
                 ListaProdutosFiltrada = new ObservableCollection<ItemCardapio>(filtrados);
 
-                // Se a lista filtrada ficou vazia, liga o aviso! Senão, desliga.
                 ExibirAvisoVazio = !ListaProdutosFiltrada.Any();
             }
         }
@@ -89,7 +110,7 @@ namespace CafeMissionario.ViewModels
             using var db = new AppDbContext();
             ListaProdutos.Clear();
 
-            var produtosDoBanco = db.Produtos.ToList();
+            var produtosDoBanco = db.Produtos.OrderBy(p => p.Nome).ToList();
 
             foreach (var p in produtosDoBanco)
             {
